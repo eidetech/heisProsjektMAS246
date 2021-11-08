@@ -11,7 +11,6 @@ CabButtons::CabButtons()
 
     // Encoder button
     pinMode(2, INPUT);
-    
 }
 
 CabButtons::~CabButtons()

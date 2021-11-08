@@ -20,14 +20,13 @@ StepperMotor::~StepperMotor()
 
 void StepperMotor::moveForward(int steps) 
 {
-
     while(stepCount < steps)
     {
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 1)
         {
-            digitalWrite (EnableA, HIGH);     // Step 1                       // Here are the 8 halfsteps that are cariied out one by one and looped until it has reached wanted number of loops
-            digitalWrite (EnableB, HIGH);                                     // Using the stepsequence variable to keep track of what step to execute when
+            digitalWrite (EnableA, HIGH);     // Step 1
+            digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, LOW);
             lastMillis = millis();
@@ -102,6 +101,7 @@ void StepperMotor::moveForward(int steps)
     if(stepCount == steps)
     {
       stepSequence = 1;
+      stepCount = 0;
     }
 }
 
@@ -114,8 +114,8 @@ void StepperMotor::moveBackward(int steps)
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 8)
         {
-            digitalWrite (EnableA, HIGH);     // Step 1                       // Here are the 8 halfsteps that are cariied out one by one and looped until it has reached wanted number of loops
-            digitalWrite (EnableB, HIGH);                                     // Using the stepsequence variable to keep track of what step to execute when
+            digitalWrite (EnableA, HIGH);     // Step 8                      
+            digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, LOW);
             lastMillis = millis();
@@ -123,7 +123,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 7)
         {
-            digitalWrite (EnableA, LOW);      // Step 2
+            digitalWrite (EnableA, LOW);      // Step 7
             digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, LOW);
@@ -132,7 +132,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 6)
         {
-            digitalWrite (EnableA, HIGH);      // Step 3
+            digitalWrite (EnableA, HIGH);      // Step 6
             digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, HIGH);
             digitalWrite (PhaseB, LOW);
@@ -141,7 +141,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 5)
         {
-            digitalWrite (EnableA, HIGH);      // Step 4
+            digitalWrite (EnableA, HIGH);      // Step 5
             digitalWrite (EnableB, LOW);
             digitalWrite (PhaseA, HIGH);
             digitalWrite (PhaseB, LOW);
@@ -150,7 +150,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 4)
         {
-            digitalWrite (EnableA, HIGH);      // Step 5
+            digitalWrite (EnableA, HIGH);      // Step 4
             digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, HIGH);
             digitalWrite (PhaseB, HIGH);
@@ -159,7 +159,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 3)
         {
-            digitalWrite (EnableA, LOW);      // Step 6
+            digitalWrite (EnableA, LOW);      // Step 3
             digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, HIGH);
@@ -168,7 +168,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 2)
         {
-            digitalWrite (EnableA, HIGH);      // Step 7
+            digitalWrite (EnableA, HIGH);      // Step 2
             digitalWrite (EnableB, HIGH);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, HIGH);
@@ -177,7 +177,7 @@ void StepperMotor::moveBackward(int steps)
             stepCount++;
         }else if((currentMillis-lastMillis) > steppingDelay && stepSequence == 1)
         {
-            digitalWrite (EnableA, HIGH);      // Step 8
+            digitalWrite (EnableA, HIGH);      // Step 1
             digitalWrite (EnableB, LOW);
             digitalWrite (PhaseA, LOW);
             digitalWrite (PhaseB, LOW);
@@ -185,15 +185,11 @@ void StepperMotor::moveBackward(int steps)
             stepSequence = 2;
             stepCount++;
         }
-        Serial.print("Step count: ");
-        Serial.println(stepCount);
     
     }
     if(stepCount == steps)
     {
       stepSequence = 1;
-      Serial.print("stepSequence: ");
-      Serial.println(stepSequence);
       stepCount = 0;
     }
 

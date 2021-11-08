@@ -10,7 +10,7 @@
 class StepperMotor
 {
 private:
-    float steppingDelay = 2.0;
+    float steppingDelay = 10.0;
     unsigned long lastMillis = 0;
     unsigned long currentMillis = 0;
     int stepCount;

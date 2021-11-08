@@ -3,7 +3,14 @@ class CabButtons
 private:
     // Array for storing input data when 
     int btnRead[9];
+
+    
+    int buttonNumber;
+    // Variable for storing digitalRead of buttons
+    int readInput;
 public:
+     
+    
     // Constructor
     CabButtons();
 
@@ -17,7 +24,4 @@ public:
     int readEncBtn();
 
     void displayBtnInput();
-
-    // Variable for storing digitalRead of buttons
-    int readInput;
 };
