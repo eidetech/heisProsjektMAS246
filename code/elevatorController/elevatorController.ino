@@ -1,19 +1,30 @@
 #include "DCmotor.h"
 #include "LED.h"
 #include "CabButtons.h"
-//#include "LCD.h"
+#include "StepperMotor.h"
 #include <LiquidCrystal.h>
+#include "dac.h"
 
 DCmotor dcMotor;
 LED leds;
 CabButtons cabButtons;
+StepperMotor doors;
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+unsigned long lastMillis = 0;
+unsigned long currentMillis = 0;
+
 void setup() {
   Serial.begin(115200);
+  dac_init ();
+  set_dac (4095 ,4095) ;
+
+  TCCR4B = TCCR4B & 0b11111000 | 0x01; // Setting the PWM frequency from 490Hz to 32kHz
+  
   lcd.begin(16, 2);
+
   // Turn on backlight (PWM 0-255)
   analogWrite(4, 255);
 
@@ -21,9 +32,16 @@ void setup() {
 }
 
 void loop() {
-  //dcMotor.setMotorSpeed(25, UP);
-  cabButtons.displayBtnInput();
+  //dcMotor.setMotorSpeed(0, UP);
+  //cabButtons.displayBtnInput();
 
-  //leds.on(7);
-  
+  //leds.on(1);
+
+  //doors.moveForward(360);
+
+    doors.moveForward(40);
+    delay(1000);
+    doors.moveForward(40); 
+
+
 }
