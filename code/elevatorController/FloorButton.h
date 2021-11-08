@@ -13,5 +13,5 @@ public:
     int readFloorBtn();
 
     // Read U/D key from keyboard
-    int readUpDown()
+    int readUpDown();
 };

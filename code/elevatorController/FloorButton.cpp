@@ -9,24 +9,23 @@ FloorButton::~FloorButton()
 {
 }
 
-int Floorbutton::readFloorBtn()
+int FloorButton::readFloorBtn()
 {
-    floorRequest = Serial.read();
-
-    Serial.println(floorRequest);
-    
-    return floorRequest;
+  Serial.print("Please select floor.");
+  floorRequest = Serial.read();
+  Serial.println(floorRequest);
+  return floorRequest;
 }
 
 int FloorButton::readUpDown()
 {
-    input = Serial.read();
-    if (input == 'U')
+  Serial.print("Please select direction (u/d).");
+  input = Serial.read();
+    if (input == 'u')
     {
-        upRequests
         Serial.println("Going UP");
     }
-    else if (input == 'D')
+    else if (input == 'd')
     {
         Serial.println("Going DOWN");
     }
