@@ -3,6 +3,7 @@
 #include "CabButtons.h"
 #include "Door.h"
 #include "StateMachine.h"
+#include "FloorButton.h"
 #include <LiquidCrystal.h>
 #include "dac.h"
 
@@ -49,7 +50,7 @@ void loop() {
     /* code */
     break;
   // Add more states here...
-  default:
+  default:  
     break;
   }
 }

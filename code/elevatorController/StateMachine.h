@@ -6,6 +6,6 @@ public:
     StateMachine();
     ~StateMachine();
 
-    idle();
+    void idle();
     
 };
