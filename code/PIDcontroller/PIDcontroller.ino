@@ -4,59 +4,61 @@
 #define PHASE 6
 #define DECAY 5
 
-volatile int posi = 0; // specify posi as volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
-long prevT = 0;
-float eprev = 0;
-float eintegral = 0;
+// safePos must be defined as volatile, so that the ISR can control that variable.
+volatile int safePos = 0; // Note on volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
+unsigned long t_prev = 0;
+float e_prev = 0;
+float e;
+float e_integral = 0;
+float e_derivative = 0;
 
 void setup() {
   Serial.begin(9600);
+
+  // Interrupt setup
   pinMode(ENCA,INPUT);
   pinMode(ENCB,INPUT);
   attachInterrupt(digitalPinToInterrupt(ENCA),readEncoder,RISING);
-  
+
+  // Motor pins setup
   pinMode(ENABLE, OUTPUT);
   pinMode(PHASE, OUTPUT);
   pinMode(DECAY, OUTPUT);
-  
-  Serial.println("target pos");
 }
 
 void loop() {
-  // set target position
-  //int target = 1200;
-  int target = 1000*sin(prevT/1e6);
+  // Example on setpoints:
+  int setpoint = 1200;
+  //int setpoint = 1000*sin(t_prev/1e6);
 
   // PID constants
-  float kp = 4;
-  float ki = 0.01;
-  float kd = 0.1;
-  
+  float Kp = 4;
+  float Ki = 0.01;
+  float Kd = 0.1;
+ 
+  unsigned long t = micros();
+  float dt = (t - t_prev)/(1.0e6); // Convert to s
+  t_prev = t;
 
-  // time difference
-  long currT = micros();
-  float deltaT = ((float) (currT - prevT))/( 1.0e6 );
-  prevT = currT;
-
-  // Read the position
+  // Read the safePos
   int pos = 0; 
-  noInterrupts(); // disable interrupts temporarily while reading
-  pos = posi;
-  interrupts(); // turn interrupts back on
+  noInterrupts(); // Disable interrupts
+  pos = safePos;
+  interrupts(); // Enable interrupts
   
-  // error
-  int e = pos - target;
+  // Calculate errors
+  e = pos - setpoint;
 
-  // derivative
-  float dedt = (e-eprev)/(deltaT);
+  // Integral
+  e_integral = e_integral + e*dt;
 
-  // integral
-  eintegral = eintegral + e*deltaT;
+  // Derivative
+  e_derivative = (e-e_prev)/(dt);
 
-  // control signal
-  float u = kp*e + kd*dedt + ki*eintegral;
+  // Calculte control signal u
+  float u = Kp*e + Ki*e_integral + Kd*e_derivative;
 
-  // motor power
+  // Set motor output limits
   float pwr = fabs(u);
   if( pwr > 255 ){
     pwr = 255;
@@ -68,34 +70,35 @@ void loop() {
     dir = HIGH;
   }
 
-  if(pos < target)
+  if(pos < setpoint)
   {
-  // signal the motor
+  // Motor control
   digitalWrite(DECAY, LOW); 
   digitalWrite(PHASE, HIGH);
   analogWrite(ENABLE, pwr);
-  }else if(pos > target)
+  }else if(pos > setpoint)
   {
   digitalWrite(DECAY, LOW); 
   digitalWrite(PHASE, LOW);
   analogWrite(ENABLE, pwr);
   }
 
-  // store previous error
-  eprev = e;
+  e_prev = e;
 
-  Serial.print(target);
+  // Serial plotting
+  Serial.print(setpoint);
   Serial.print(" ");
   Serial.print(pos);
   Serial.println();
 }
 
+// readEncoder ISR
 void readEncoder(){
   int b = digitalRead(ENCB);
   if(b > 0){
-    posi++;
+    safePos++;
   }
   else{
-    posi--;
+    safePos--;
   }
 }
