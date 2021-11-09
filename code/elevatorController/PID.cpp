@@ -4,12 +4,16 @@
 #define ENCA 21
 #define ENCB 22
 
+volatile int PID::pos_i = 0;
+volatile float PID::velocity_i = 0;
+volatile long PID::prevT_i = 0;
+
 PID::PID()
 {
     pinMode(ENCA,INPUT);
     pinMode(ENCB,INPUT);
-    attachInterrupt(digitalPinToInterrupt(ENCA),
-                  readEncoder,RISING);
+    
+    attachInterrupt(digitalPinToInterrupt(ENCA), readEncoder, RISING);
 }
 
 PID::~PID()
@@ -44,11 +48,11 @@ float PID::PIDcalc()
     v2Prev = v2;
 
     // Set a target
-    float vt = 100*(sin(currT/1e6)>0);
+    vt = 10;
 
     // Compute the control signal u
-    float kp = 5;
-    float ki = 10;
+    float kp = 1000;
+    float ki = 50;
     float e = vt-v1Filt;
     eintegral = eintegral + e*deltaT;
 
@@ -56,7 +60,7 @@ float PID::PIDcalc()
     return u;
 }
 
-void PID::readEncoder(){
+static void PID::readEncoder(){
   // Read encoder B when ENCA rises
   int b = digitalRead(ENCB);
   int increment = 0;

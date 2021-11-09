@@ -1,15 +1,16 @@
 class PID
 {
 private:
+    static void readEncoder();
 
 public:
 
     long prevT = 0;
     int posPrev = 0;
 
-    volatile int pos_i = 0;
-    volatile float velocity_i = 0;
-    volatile long prevT_i = 0;
+    static volatile int pos_i;
+    static volatile float velocity_i;
+    static volatile long prevT_i;
 
     float v1Filt = 0;
     float v1Prev = 0;
@@ -20,10 +21,14 @@ public:
 
     int pos = 0;
     float velocity2 = 0;
+
+    float vt;
     
     PID();
     ~PID();
 
     float PIDcalc();
-    void readEncoder();
+
+    
+    
 };

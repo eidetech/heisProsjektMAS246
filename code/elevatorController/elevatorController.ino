@@ -53,8 +53,11 @@ void loop() {
     dir = -1;
   }
 
-  dcMotor.setMotorSpeed(u, dir);
-
+  dcMotor.setMotorSpeed(fabs(u), dir);
+  Serial.print(pidController.vt);
+  Serial.print(" ");
+  Serial.print(pidController.v1Filt);
+  Serial.println();
 
   switch (state)
   {
