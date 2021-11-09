@@ -30,7 +30,5 @@ int FloorButton::readUpDown()
         Serial.println("Going DOWN");
     }
     
-    
-
     return input;
 }

@@ -4,14 +4,18 @@
 #include "Door.h"
 #include "StateMachine.h"
 #include "FloorButton.h"
+#include "PID.h"
 #include <LiquidCrystal.h>
 #include "dac.h"
+
 
 DCmotor dcMotor;
 LED leds;
 CabButtons cabButtons;
 Door doors;
 FloorButton floorButton;
+PID pidController;
+
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -23,10 +27,13 @@ unsigned long currentMillis = 0;
 enum elevatorState {IDLE, REQUEST_UP, REQUEST_DOWN};
 elevatorState state = IDLE;
 
+float u;
+int dir;
+
 void setup() {
   Serial.begin(115200);
   dac_init();
-  set_dac(4095 ,4095) ;
+  set_dac(4095, 4095) ;
 
   TCCR4B = TCCR4B & 0b11111000 | 0x01; // Setting the PWM frequency from 490Hz to 32kHz
   
@@ -39,9 +46,16 @@ void setup() {
 }
 
 void loop() {
-  floorButton.readFloorBtn();
-  floorButton.readUpDown();
-  
+  u = pidController.PIDcalc();
+
+  dir = 1;
+  if (u<0){
+    dir = -1;
+  }
+
+  dcMotor.setMotorSpeed(u, dir);
+
+
   switch (state)
   {
   case IDLE:
