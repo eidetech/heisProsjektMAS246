@@ -1,19 +1,28 @@
 #include "PID.h"
 #include "Arduino.h"
 
-#define ENCA 21
-#define ENCB 22
+volatile long PID::encoderCount = 0;
+float PID::theta_prev = 0;
+unsigned long PID::t_prev = 0;
+float PID::e_prev = 0;
+float PID::int_e_prev = 0;
+volatile long PID::globalEncoderCounter = 0;
+float PID::u = 0;
+float PID::dt = 0;
+unsigned long PID::t = 0;
+float PID::theta = 0, PID::theta_d = 0;
+float PID::e = 0;
+float PID::int_e = 0;
+int PID::Kp, PID::Ki, PID::Kd;
 
-volatile int PID::pos_i = 0;
-volatile float PID::velocity_i = 0;
-volatile long PID::prevT_i = 0;
 
 PID::PID()
 {
-    pinMode(ENCA,INPUT);
-    pinMode(ENCB,INPUT);
+    pinMode(ENCA, INPUT_PULLUP);
+    pinMode(ENCB, INPUT_PULLUP);
     
-    attachInterrupt(digitalPinToInterrupt(ENCA), readEncoder, RISING);
+    attachInterrupt(digitalPinToInterrupt(ENCA), ISR_A, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(ENCB), ISR_B, CHANGE);
 }
 
 PID::~PID()
@@ -22,61 +31,82 @@ PID::~PID()
 
 float PID::PIDcalc()
 {
-    // read the position and velocity
-    int pos = 0;
-    float velocity2 = 0;
-    noInterrupts(); // disable interrupts temporarily while reading
-    pos = pos_i;
-    velocity2 = velocity_i;
-    interrupts(); // turn interrupts back on
+  t = millis();
+  theta = globalEncoderCounter;
+  dt = t-t_prev;
+  theta_d = 10;
+  e = theta-theta_d;
 
-    // Compute velocity with method 1
-    long currT = micros();
-    float deltaT = ((float) (currT-prevT))/1.0e6;
-    float velocity1 = (pos - posPrev)/deltaT;
-    posPrev = pos;
-    prevT = currT;
+  int_e = int_e_prev + (dt*(e+e_prev)/2);
 
-    // Convert count/s to RPM
-    float v1 = velocity1/600.0*60.0;
-    float v2 = velocity2/600.0*60.0;
+  Kp = 1;
+  Ki = 0;
+  Kd = 0;
 
-    // Low-pass filter (25 Hz cutoff)
-    v1Filt = 0.854*v1Filt + 0.0728*v1 + 0.0728*v1Prev;
-    v1Prev = v1;
-    v2Filt = 0.854*v2Filt + 0.0728*v2 + 0.0728*v2Prev;
-    v2Prev = v2;
+  u = Kp*e + Ki * int_e + (Kd * (e-e_prev)/dt);
 
-    // Set a target
-    vt = 10;
+  theta_prev = theta;
+  t_prev = t;
 
-    // Compute the control signal u
-    float kp = 1000;
-    float ki = 50;
-    float e = vt-v1Filt;
-    eintegral = eintegral + e*deltaT;
-
-    float u = kp*e + ki*eintegral;
-    return u;
+  return u;
 }
 
-static void PID::readEncoder(){
-  // Read encoder B when ENCA rises
-  int b = digitalRead(ENCB);
-  int increment = 0;
-  if(b>0){
-    // If B is high, increment forward
-    increment = 1;
-  }
-  else{
-    // Otherwise, increment backward
-    increment = -1;
-  }
-  pos_i = pos_i + increment;
+void PID::ISR_A()
+{
+  bool pinA = digitalRead(ENCA);
+  bool pinB = digitalRead(ENCB);
 
-  // Compute velocity with method 2
-  long currT = micros();
-  float deltaT = ((float) (currT - prevT_i))/1.0e6;
-  velocity_i = increment/deltaT;
-  prevT_i = currT;
+  if(pinB == LOW)
+  {
+    if(pinA == HIGH)
+    {
+      encoderCount++;
+    }else
+    {
+      encoderCount--;
+    }
+  }else
+  {
+    if(pinA == HIGH)
+    {
+      encoderCount++;
+      }else
+      {
+        encoderCount--;
+      }
+    
+  }
+  noInterrupts();
+  globalEncoderCounter = encoderCount;
+  interrupts();
+}
+
+void PID::ISR_B()
+{
+  bool pinA = digitalRead(ENCA);
+  bool pinB = digitalRead(ENCB);
+
+  if(pinA == LOW)
+  {
+    if(pinB == HIGH)
+    {
+      encoderCount--;
+    }else
+    {
+      encoderCount++;
+    }
+  }else
+  {
+    if(pinB == HIGH)
+    {
+      encoderCount++;
+      }else
+      {
+        encoderCount--;
+      }
+    
+  }
+  noInterrupts();
+  globalEncoderCounter = encoderCount;
+  interrupts();
 }
