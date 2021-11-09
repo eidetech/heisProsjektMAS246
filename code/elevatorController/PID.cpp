@@ -14,6 +14,7 @@ float PID::theta = 0, PID::theta_d = 0;
 float PID::e = 0;
 float PID::int_e = 0;
 int PID::Kp, PID::Ki, PID::Kd;
+unsigned long PID::lastMillis = 0;
 
 
 PID::PID()
@@ -30,25 +31,33 @@ PID::~PID()
 }
 
 float PID::PIDcalc()
-{
+{ 
+  int sampleTime = 10;
+  if (checkTime(lastMillis, sampleTime))
+  {
+  lastMillis = millis();
+  int der_e;
   t = millis();
   theta = globalEncoderCounter;
   dt = t-t_prev;
   theta_d = 10;
-  e = theta-theta_d;
+  e = theta_d - u;
 
-  int_e = int_e_prev + (dt*(e+e_prev)/2);
+  int_e = int_e + e*dt;
+  der_e = (e-e_prev)/dt;
 
-  Kp = 1;
+  Kp = 100;
   Ki = 0;
   Kd = 0;
 
-  u = Kp*e + Ki * int_e + (Kd * (e-e_prev)/dt);
+  u = Kp*e + Ki*int_e + Kd*der_e;
 
-  theta_prev = theta;
-  t_prev = t;
+  e_prev = e;
+  //theta_prev = theta;
+  //t_prev = t;
 
   return u;
+  }
 }
 
 void PID::ISR_A()
@@ -109,4 +118,15 @@ void PID::ISR_B()
   noInterrupts();
   globalEncoderCounter = encoderCount;
   interrupts();
+}
+
+bool PID::checkTime(unsigned long int lastMillisInput, int wait)     
+{  
+  unsigned long currentMillis = millis();
+  
+  if (currentMillis - lastMillisInput >= wait)                                // Timer function instead of using delay(), calculates the difference in current milliseconds
+  {                                                                           // and previous milliseconds input, then goes "true" when it exceeds wait time input.  
+      return true;                                                            // This makes it easy to use timer without blocking the code with a delay().
+  }
+  return false;
 }

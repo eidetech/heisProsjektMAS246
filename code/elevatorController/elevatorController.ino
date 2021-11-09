@@ -53,6 +53,12 @@ void loop() {
     dir = -1;
   }
 
+  if (u > 255)
+  {
+    u = 255;
+  }
+  
+
   dcMotor.setMotorSpeed(u, dir);
 
   Serial.print(pidController.theta_d);

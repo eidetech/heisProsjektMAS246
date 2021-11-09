@@ -7,7 +7,7 @@ class PID
 private:
     static void ISR_A();
     static void ISR_B();
-
+    static bool checkTime(unsigned long int lastMillisInput, int wait);
     
 public:
     
@@ -27,5 +27,6 @@ public:
     static volatile long globalEncoderCounter;
 
     static int Kp, Ki, Kd;
+    static unsigned long lastMillis;
 
 };
