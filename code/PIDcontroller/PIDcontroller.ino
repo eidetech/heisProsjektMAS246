@@ -55,7 +55,7 @@ void loop() {
   // Derivative
   e_derivative = (e-e_prev)/(dt);
 
-  // Calculte control signal u
+  // Calculate control signal u
   float u = Kp*e + Ki*e_integral + Kd*e_derivative;
 
   // Set motor output limits

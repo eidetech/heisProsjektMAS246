@@ -46,7 +46,7 @@ void setup() {
 }
 
 void loop() {
-  u = pidController.PIDcalc();
+  u = pidController.PIDCalc(1200, 4, 0.01, 0.1, true);
 
   dir = 1;
   if (u<0){
@@ -60,10 +60,6 @@ void loop() {
   
 
   dcMotor.setMotorSpeed(u, dir);
-
-  Serial.print(pidController.theta_d);
-  Serial.print("\t");
-  Serial.println(pidController.theta); 
 
   switch (state)
   {

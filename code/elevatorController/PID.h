@@ -1,32 +1,12 @@
-#define ENCA 21
-#define ENCB 22
-
+#define ENCA 20
+#define ENCB 21
 
 class PID
 {
 private:
-    static void ISR_A();
-    static void ISR_B();
-    static bool checkTime(unsigned long int lastMillisInput, int wait);
-    
+    static void readEncoder_ISR();
 public:
-    
     PID();
     ~PID();
-    static float PIDcalc();
-
-    //static bool pinA, pinB;
-    static volatile long encoderCount;
-    static float theta, theta_prev, theta_d, RPM;
-    static unsigned long t, t_prev;
-
-    static float u, dt;
-
-    static float e, e_prev, int_e, int_e_prev;
-
-    static volatile long globalEncoderCounter;
-
-    static int Kp, Ki, Kd;
-    static unsigned long lastMillis;
-
+    static float PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot);
 };
