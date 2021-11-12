@@ -1,37 +1,37 @@
-#include "Que.h"
+#include "Queue.h"
 #include "Arduino.h"
 
-Que::Que()
+Queue::Queue()
 {
 }
 
-Que::~Que()
+Queue::~Queue()
 {
 }
 
-int Que::addUp(int floorNum)
+int Queue::addUp(int floorNum)
 {
     upRequests[floorNum-1] = 1;
     Serial.print("Floor num:");
     Serial.println(floorNum);
 }
 
-int Que::addDown(int floorNum)
+int Queue::addDown(int floorNum)
 {
     downRequests[floorNum-1] = 1;
 }
 
-int Que::removeUp(int floorNum)
+int Queue::removeUp(int floorNum)
 {
     upRequests[floorNum] = 0;
 }
 
-int Que::removeDown(int floorNum)
+int Queue::removeDown(int floorNum)
 {
     downRequests[floorNum] = 0;
 }
 
-void Que::printRequests()
+void Queue::printRequests()
 {
     Serial.println("Up requests: ");
     for (int i = 1; i <= floors; i++)

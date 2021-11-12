@@ -1,10 +1,10 @@
-class Que
+class Queue
 {
 private:
     
 public:
-    Que();
-    ~Que();
+    Queue();
+    ~Queue();
 
     int addUp(int floorNum);
     int addDown(int floorNum);
