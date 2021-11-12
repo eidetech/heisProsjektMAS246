@@ -1,4 +1,5 @@
 #include "PID.h"
+#include "DCmotor.h"
 #include "Arduino.h"
 
 // safePos must be defined as volatile, so that the ISR can control that variable.
@@ -8,6 +9,7 @@ static float e_prev = 0;
 static float e;
 static float e_integral = 0;
 static float e_derivative = 0;
+static int motorDirection = 1;
 
 PID::PID()
 {
@@ -23,6 +25,8 @@ PID::~PID()
 
 float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot)
 { 
+  DCmotor dcMotor;
+  //setPoint = 1000*sin(t_prev/1e6);
   unsigned long t = micros();
   float dt = (t - t_prev)/(1.0e6); // Convert to s
   t_prev = t;
@@ -44,6 +48,27 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
 
   // Calculate control signal u
   float u = Kp*e + Ki*e_integral + Kd*e_derivative;
+
+  // Set motor output limits
+  float pwr = fabs(u);
+
+  if( pwr > 255 ){
+    pwr = 255;
+  }
+
+  // motor direction
+  int dir = LOW;
+  if(u<0){
+    dir = HIGH;
+  }
+
+  if(pos < setPoint)
+  {
+    dcMotor.setMotorSpeed(pwr, dir);
+  }else if(pos > setPoint)
+  {
+    dcMotor.setMotorSpeed(pwr, dir);
+  }
 
   e_prev = e;
 

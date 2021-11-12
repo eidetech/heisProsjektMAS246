@@ -9,4 +9,5 @@ public:
     PID();
     ~PID();
     static float PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot);
+    static int motorDirection;
 };

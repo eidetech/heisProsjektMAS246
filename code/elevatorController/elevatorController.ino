@@ -5,17 +5,18 @@
 #include "StateMachine.h"
 #include "FloorButton.h"
 #include "PID.h"
+#include "Que.h"
 #include <LiquidCrystal.h>
 #include "dac.h"
 
 
 DCmotor dcMotor;
 LED leds;
-CabButtons cabButtons;
+//CabButtons cabButtons;
 Door doors;
 FloorButton floorButton;
 PID pidController;
-
+StateMachine stateMachine;
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -23,15 +24,11 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 unsigned long lastMillis = 0;
 unsigned long currentMillis = 0;
 
-// elevatorState holds the possible states of the elevator
-enum elevatorState {IDLE, REQUEST_UP, REQUEST_DOWN};
-elevatorState state = IDLE;
-
 float u;
 int dir;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   dac_init();
   set_dac(4095, 4095) ;
 
@@ -46,34 +43,25 @@ void setup() {
 }
 
 void loop() {
-  u = pidController.PIDCalc(1200, 4, 0.01, 0.1, true);
+  //u = pidController.PIDCalc(10*2100, 2, 0.01, 0.3, true);
 
-  dir = 1;
-  if (u<0){
-    dir = -1;
-  }
-
-  if (u > 255)
-  {
-    u = 255;
-  }
-  
-
-  dcMotor.setMotorSpeed(u, dir);
-
-  switch (state)
+  switch (stateMachine.state)
   {
   case IDLE:
-    /* code */
+    stateMachine.idle();
     break;
-  case REQUEST_UP:
-    /* code */
+  case PREPARING_MOVE:
+    stateMachine.prepareMove();
     break;
-  case REQUEST_DOWN:
-    /* code */
+  case MOVING_UP:
+    stateMachine.moveUp();
+    break;
+  case MOVING_DOWN:
+    stateMachine.moveDown();
     break;
   // Add more states here...
   default:  
     break;
   }
+  delay(500);
 }
