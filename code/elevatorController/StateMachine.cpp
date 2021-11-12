@@ -27,25 +27,8 @@ StateMachine::~StateMachine()
 {
 }
 
-void StateMachine::idle()
+void StateMachine::readButtons()
 {
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.write("Heis(ann)! v0.1");
-    lcd.setCursor(4,2);
-    lcd.print(currentFloor);
-    lcd.print(".");
-    lcd.print(" floor");
-
-    Serial.println("*** STATE: IDLE ***");
-    if(overload.checkWeight())
-    {
-    lcd.clear();
-    lcd.setCursor(4,0);
-    lcd.print("Etasje ");
-    lcd.print(currentFloor);
-    //que.printRequests();
-
     // Check if any tactile buttons are pressed:
     for (int i = 1; i <= floors; i++)
     {
@@ -66,6 +49,23 @@ void StateMachine::idle()
             } 
         }
     }
+}
+
+void StateMachine::idle()
+{
+
+
+    Serial.println("*** STATE: IDLE ***");
+    if(overload.checkWeight())
+    {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.write("Heis(ann)! v0.1");
+    lcd.setCursor(4,2);
+    lcd.print(currentFloor);
+    lcd.print(".");
+    lcd.print(" floor");
+    //que.printRequests();
 
     // Check if any requests should be completed:
     for (int i = 1; i <= floors; i++)
@@ -81,7 +81,7 @@ void StateMachine::idle()
 void StateMachine::prepareMove()
 {
     Serial.println("*** STATE: PREPARE_MOVE ***");
-    // Checking weigth
+    // Checking weight
    
 
     for (int i = 1; i <= floors; i++)
@@ -97,8 +97,8 @@ void StateMachine::prepareMove()
         }
         
     }
-    
-
+    Serial.print("Direction: ");
+    Serial.println(direction);
     // After all checks are verified OK, do the correct motion:
     for (int i = 1; i <= floors; i++)
     {
@@ -109,10 +109,6 @@ void StateMachine::prepareMove()
             {
                 state = MOVING_UP;
                 break;
-            //}else if (currentFloor > i)
-            //{
-            //    state = MOVING_DOWN;
-            //    break;
             }
         }else if (que.downRequests[i-1] == 1 && direction == DOWN)
         {
@@ -121,10 +117,6 @@ void StateMachine::prepareMove()
             {
                 state = MOVING_DOWN;
                 break;
-            // }else if (currentFloor > i)
-            // {
-            //     state = MOVING_DOWN;
-            //     break;
             }
             
         }else
@@ -134,6 +126,7 @@ void StateMachine::prepareMove()
     }
     if (!anyRequests)
     {
+        Serial.println("No requests, going back to IDLE.");
         state = IDLE;
     }
     
@@ -148,9 +141,9 @@ void StateMachine::moveUp()
     {
         if (que.upRequests[i-1] == 1)
         {
-            que.printRequests();
-            que.removeUp(i-1);
-            que.printRequests();
+            // que.printRequests();
+            // que.removeUp(i-1);
+            // que.printRequests();
 
             int count = 0;
             unsigned long startTime = 0;
@@ -190,9 +183,9 @@ void StateMachine::moveDown()
     {
         if (que.downRequests[i-1] == 1)
         {
-            que.printRequests();
-            que.removeDown(i-1);
-            que.printRequests();
+            // que.printRequests();
+            // que.removeDown(i-1);
+            // que.printRequests();
             
             int count = 0;
             unsigned long startTime = 0;
@@ -242,6 +235,19 @@ void StateMachine::arrived()
             Serial.print("Arrived at floor: ");
             Serial.println(currentFloor);   
             doors.open();
+    
+    if (direction == UP)
+    {
+        que.printRequests();
+        que.removeUp(currentFloor);
+        que.printRequests();
+    }else if (direction == DOWN)
+    {
+        que.printRequests();
+        que.removeDown(currentFloor);
+        que.printRequests();
+    }
+
             if ((millis() - startTime) >= 1000)
             {
                 delay(doors.doorOpeningTime);

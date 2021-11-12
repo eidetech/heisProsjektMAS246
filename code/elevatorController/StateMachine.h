@@ -10,6 +10,7 @@ public:
     StateMachine();
     ~StateMachine();
 
+    void readButtons();
     void idle();
     void prepareMove();
     void moveUp();

@@ -21,6 +21,8 @@ extern LiquidCrystal lcd;
 
 unsigned long lastMillis = 0;
 unsigned long currentMillis = 0;
+const int updateRate = 100; // ms
+unsigned long millisDiff;
 
 float u;
 int dir;
@@ -40,26 +42,34 @@ void setup() {
 
 void loop() {
   //u = pidController.PIDCalc(2100, 2, 0.01, 0.3, true);
-  
-  switch (stateMachine.state)
+  currentMillis = millis();
+  millisDiff = currentMillis - lastMillis;
+
+  stateMachine.readButtons();
+
+  if(millisDiff >= updateRate)
   {
-  case IDLE:
-    stateMachine.idle();
-    break;
-  case PREPARING_MOVE:
-    stateMachine.prepareMove();
-    break;
-  case MOVING_UP:
-    stateMachine.moveUp();
-    break;
-  case MOVING_DOWN:
-    stateMachine.moveDown();
-    break;
-  case ARRIVED:
-    stateMachine.arrived();
-    break;
-  // Add more states here...
-  default:  
-    break;
+    switch (stateMachine.state)
+    {
+    case IDLE:
+      stateMachine.idle();
+      break;
+    case PREPARING_MOVE:
+      stateMachine.prepareMove();
+      break;
+    case MOVING_UP:
+      stateMachine.moveUp();
+      break;
+    case MOVING_DOWN:
+      stateMachine.moveDown();
+      break;
+    case ARRIVED:
+      stateMachine.arrived();
+      break;
+    // Add more states here...
+    default:  
+      break;
+    }
+  lastMillis = millis();
   }
 }
