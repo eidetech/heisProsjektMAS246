@@ -4,14 +4,19 @@
 #include "PID.h"
 #include "Door.h"
 #include "Arduino.h"
+#include <LiquidCrystal.h>
 
 CabButtons cabButtons;
 PID pidController;
 Queue que;
 Door doors;
 
+const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+    
 StateMachine::StateMachine()
 {
+    //lcd.write("helo");
 }
 
 StateMachine::~StateMachine()
@@ -20,6 +25,8 @@ StateMachine::~StateMachine()
 
 void StateMachine::idle()
 {
+    lcd.setCursor(0,0);
+    lcd.write("Heis(ann)! v0.1");
     Serial.println("*** STATE: IDLE ***");
     //que.printRequests();
 
@@ -48,8 +55,6 @@ void StateMachine::idle()
             state = PREPARING_MOVE;
         }
     }
-    
-    
 }
 
 void StateMachine::prepareMove()

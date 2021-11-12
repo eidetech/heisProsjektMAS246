@@ -20,8 +20,7 @@ FloorButton floorButton;
 StateMachine stateMachine;
 Overload overload;
 
-const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+extern LiquidCrystal lcd;
 
 unsigned long lastMillis = 0;
 unsigned long currentMillis = 0;
