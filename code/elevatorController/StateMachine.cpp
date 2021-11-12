@@ -16,7 +16,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
     
 StateMachine::StateMachine()
 {
-    //lcd.write("helo");
+
 }
 
 StateMachine::~StateMachine()
@@ -28,6 +28,7 @@ void StateMachine::idle()
     lcd.setCursor(0,0);
     lcd.write("Heis(ann)! v0.1");
     Serial.println("*** STATE: IDLE ***");
+
     //que.printRequests();
 
     // Check if any tactile buttons are pressed:
@@ -60,7 +61,8 @@ void StateMachine::idle()
 void StateMachine::prepareMove()
 {
     Serial.println("*** STATE: PREPARE_MOVE ***");
-    // Check weight limit etc...
+    // Checking weigth
+   
 
     for (int i = 1; i <= floors; i++)
     {
