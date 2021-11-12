@@ -10,8 +10,10 @@ PID pidController;
 Que que;
 Door doors;
 
+
 StateMachine::StateMachine()
 {
+   
 }
 
 StateMachine::~StateMachine()
@@ -20,7 +22,9 @@ StateMachine::~StateMachine()
 
 void StateMachine::idle()
 {
-    Serial.println("*** STATE: IDLE ***");
+    Serial.println("*** STATE: IDLE ***");  
+    
+    
     //que.printRequests();
 
     // Check if any tactile buttons are pressed:
@@ -55,7 +59,8 @@ void StateMachine::idle()
 void StateMachine::prepareMove()
 {
     Serial.println("*** STATE: PREPARE_MOVE ***");
-    // Check weight limit etc...
+    // Checking weigth
+   
 
     // After all checks are verified OK, do the correct motion:
     for (int i = 1; i < floors; i++)
