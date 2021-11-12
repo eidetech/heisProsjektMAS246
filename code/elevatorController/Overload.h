@@ -1,11 +1,14 @@
 class Overload
+
 {
+;
 private:
+
     // Storing pot value
-    int pot;
+    
 
 public:
-    
+    int pot;
     // Constructor
     Overload();
 

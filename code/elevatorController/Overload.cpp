@@ -15,12 +15,15 @@ Overload::~Overload()
 
 int Overload::checkWeigth()
 {
-     pot = analogRead(A0);
-    
-    if (pot > 500)
-  {
-    Serial.println("ALARM");
-    lcd.print("hallaisikken");
-  }
-    return;
+     pot = analogRead(A0)*2;
+      
+      Serial.print(pot);
+      Serial.println("kg");
+      Serial.println("OK");
+      
+      if (pot > 1500)
+      {
+        Serial.println("ALARM");
+        
+      }
 }
