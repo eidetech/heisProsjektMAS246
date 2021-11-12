@@ -29,8 +29,14 @@ StateMachine::~StateMachine()
 
 void StateMachine::idle()
 {
-    //lcd.setCursor(0,0);
-    
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.write("Heis(ann)! v0.1");
+    lcd.setCursor(4,2);
+    lcd.print(currentFloor);
+    lcd.print(".");
+    lcd.print(" floor");
+
     Serial.println("*** STATE: IDLE ***");
     if(overload.checkWeight())
     {
