@@ -16,7 +16,7 @@ public:
     void moveDown();
     void arrived();
 
-    int floors = 4;
+    int floors = 7;
     int currentFloor = 1;
     bool anyRequests = false;
 
