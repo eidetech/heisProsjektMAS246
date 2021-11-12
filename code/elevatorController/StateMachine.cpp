@@ -1,13 +1,13 @@
 #include "StateMachine.h"
 #include "CabButtons.h"
-#include "Que.h"
+#include "Queue.h"
 #include "PID.h"
 #include "Door.h"
 #include "Arduino.h"
 
 CabButtons cabButtons;
 PID pidController;
-Que que;
+Queue que;
 Door doors;
 
 StateMachine::StateMachine()
