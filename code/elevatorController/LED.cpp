@@ -36,11 +36,11 @@ void LED::lightUpSeq()
 // Turn on specific LED
 void LED::on(int led)
 {
-    digitalWrite(42+led, HIGH);
+    digitalWrite(49-led, HIGH);
 }
 
 // Turn off specific LED
 void LED::off(int led)
 {
-    digitalWrite(42+led, LOW);
+    digitalWrite(49-led, LOW);
 }

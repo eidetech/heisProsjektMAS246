@@ -12,5 +12,5 @@ public:
     static int motorDirection;
     static void motorOff();
 
-    int runTime = 3500;
+    int runTime = 3000;
 };

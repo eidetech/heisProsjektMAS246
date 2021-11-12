@@ -17,6 +17,7 @@ public:
     void arrived();
 
     int floors = 4;
+    int encoderPos = 2100;
     int currentFloor = 1;
     bool anyRequests = false;
 

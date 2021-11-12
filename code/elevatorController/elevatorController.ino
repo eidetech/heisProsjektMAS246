@@ -1,5 +1,5 @@
 //#include "DCmotor.h"
-#include "LED.h"
+//#include "LED.h"
 #include "CabButtons.h"
 #include "Door.h"
 #include "StateMachine.h"
@@ -10,7 +10,7 @@
 #include <LiquidCrystal.h>
 
 //DCmotor dcMotor;
-LED leds;
+//LED leds;
 //CabButtons cabButtons;
 //Door doors;
 FloorButton floorButton;

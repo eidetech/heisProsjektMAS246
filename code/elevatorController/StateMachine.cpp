@@ -5,6 +5,7 @@
 #include "Door.h"
 #include "Arduino.h"
 #include <LiquidCrystal.h>
+#include "LED.h"
 #include "Overload.h"
 
 CabButtons cabButtons;
@@ -12,6 +13,7 @@ PID pidController;
 Queue que;
 Door doors;
 Overload overload;
+LED leds;
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -33,7 +35,9 @@ void StateMachine::idle()
     if(overload.checkWeight())
     {
     lcd.clear();
-    lcd.print("Heis(ann)! v0.1");
+    lcd.setCursor(4,0);
+    lcd.print("Etasje ");
+    lcd.print(currentFloor);
     //que.printRequests();
 
     // Check if any tactile buttons are pressed:
@@ -44,9 +48,13 @@ void StateMachine::idle()
             if (currentFloor > i)
             {
                 que.addDown(i);
+                leds.on(i);
+                Serial.print("Adding down");
+                Serial.println(i);
             }else if(currentFloor < i)
             {
                 que.addUp(i);
+                leds.on(i);
                 Serial.print("Adding up");
                 Serial.println(i);
             } 
@@ -130,16 +138,13 @@ void StateMachine::moveUp()
 {
     Serial.println("*** STATE: MOVING_UP ***");
 
-    for (int i = currentFloor; i <= floors; i++)
+    for (int i = 1; i <= floors; i++)
     {
-        if (que.upRequests[i] == 1)
+        if (que.upRequests[i-1] == 1)
         {
             que.printRequests();
-            que.removeUp(i);
+            que.removeUp(i-1);
             que.printRequests();
-            currentFloor += i;
-            Serial.println("Moving to floor: ");
-            Serial.println(currentFloor);
 
             int count = 0;
             unsigned long startTime = 0;
@@ -151,11 +156,15 @@ void StateMachine::moveUp()
             count++;
             
 
-            while((millis() - startTime) <=3000)
+            while((millis() - startTime) <= (pidController.runTime * (i-currentFloor)))
             {                
-                pidController.PIDCalc(i*2100, 0.1, 0.003, 0, false);
-                if ((millis() - startTime) >= 3000)
+                pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, false);
+                if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
                 {
+                    currentFloor = i;
+                    Serial.println("Moving to floor: ");
+                    Serial.println(currentFloor);
+                    leds.off(i);
                     pidController.motorOff();
                     state = ARRIVED;
                 }
@@ -178,9 +187,6 @@ void StateMachine::moveDown()
             que.printRequests();
             que.removeDown(i-1);
             que.printRequests();
-            currentFloor -= i;
-            Serial.println("Moving to floor: ");
-            Serial.println(currentFloor);
             
             int count = 0;
             unsigned long startTime = 0;
@@ -192,11 +198,15 @@ void StateMachine::moveDown()
             count++;
             
 
-            while((millis() - startTime) <= pidController.runTime * (currentFloor-(i-1)))
+            while((millis() - startTime) <= (pidController.runTime * abs(currentFloor-i)))
             {                
-                pidController.PIDCalc(-(currentFloor-i)*2100, 0.1, 0.003, 0, false);
-                if ((millis() - startTime) >= pidController.runTime * (currentFloor-(i-1)))
+                pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, false);
+                if ((millis() - startTime) >= (pidController.runTime * abs(currentFloor-i)))
                 {
+                    currentFloor = i;
+                    Serial.println("Moving to floor: ");
+                    Serial.println(currentFloor);
+                    leds.off(i);
                     pidController.motorOff();
                     state = ARRIVED;
                 }
@@ -223,6 +233,7 @@ void StateMachine::arrived()
     while((millis() - startTime) <= 1000)
         {             
             Serial.println("*** OPENING DOORS ***");
+            Serial.print("Arrived at floor: ");
             Serial.println(currentFloor);   
             doors.open();
             if ((millis() - startTime) >= 1000)
