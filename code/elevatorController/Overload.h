@@ -16,7 +16,7 @@ public:
     ~Overload();
 
 
-    int checkWeigth();
+    bool checkWeight();
    
     
 };

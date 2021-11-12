@@ -5,10 +5,9 @@
 #include "StateMachine.h"
 #include "FloorButton.h"
 //#include "PID.h"
-#include "Que.h"
+#include "Queue.h"
 #include "dac.h"
 #include <LiquidCrystal.h>
-#include "Overload.h"
 
 //DCmotor dcMotor;
 LED leds;
@@ -17,7 +16,6 @@ LED leds;
 FloorButton floorButton;
 //PID pidController;
 StateMachine stateMachine;
-Overload overload;
 
 extern LiquidCrystal lcd;
 
@@ -37,7 +35,6 @@ void setup() {
 
 // Turn on backlight (PWM 0-255)
   analogWrite(4, 255);
-  
 }
 
 
@@ -48,32 +45,9 @@ void loop() {
   {
   case IDLE:
     stateMachine.idle();
-      overload.checkWeigth();
-    if(overload.pot > 1400)
-    {
-      lcd.clear();
-      delay(500);
-      lcd.print("    ");
-      lcd.print(overload.pot);  
-      lcd.print(" kg");
-      lcd.setCursor(1, 2);
-      lcd.print("---Overload---");
-      delay(500);
-      
-    }
-    else
-    {
-      lcd.clear();
-      lcd.print("    ");
-      lcd.print(overload.pot);  
-      lcd.print(" kg");
-      }
-      
     break;
-    
   case PREPARING_MOVE:
     stateMachine.prepareMove();
-    
     break;
   case MOVING_UP:
     stateMachine.moveUp();

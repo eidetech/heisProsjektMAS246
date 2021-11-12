@@ -5,11 +5,13 @@
 #include "Door.h"
 #include "Arduino.h"
 #include <LiquidCrystal.h>
+#include "Overload.h"
 
 CabButtons cabButtons;
 PID pidController;
 Queue que;
 Door doors;
+Overload overload;
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -25,10 +27,13 @@ StateMachine::~StateMachine()
 
 void StateMachine::idle()
 {
-    lcd.setCursor(0,0);
-    lcd.write("Heis(ann)! v0.1");
+    //lcd.setCursor(0,0);
+    
     Serial.println("*** STATE: IDLE ***");
-
+    if(overload.checkWeight())
+    {
+    lcd.clear();
+    lcd.print("Heis(ann)! v0.1");
     //que.printRequests();
 
     // Check if any tactile buttons are pressed:
@@ -55,6 +60,7 @@ void StateMachine::idle()
         {
             state = PREPARING_MOVE;
         }
+    }
     }
 }
 
