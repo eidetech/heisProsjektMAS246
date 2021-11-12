@@ -194,3 +194,9 @@ void StepperMotor::moveBackward(int steps)
     }
 
 }
+
+void StepperMotor::stepperDisable()
+{
+    digitalWrite (EnableA, LOW);
+    digitalWrite (EnableB, LOW);
+}

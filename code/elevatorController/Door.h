@@ -18,4 +18,7 @@ public:
 
     void open();
     void close();
+    void doorDisable();
+
+    int doorOpeningTime = 1000;
 };

@@ -17,3 +17,8 @@ void Door::close()
 {
     stepper.moveBackward(doorMoveLength);   
 }
+
+void Door::doorDisable()
+{
+    stepper.stepperDisable();
+}

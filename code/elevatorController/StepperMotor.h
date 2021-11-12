@@ -21,4 +21,5 @@ public:
 
     void moveForward(int steps);
     void moveBackward(int steps);
+    void stepperDisable();
 };

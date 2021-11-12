@@ -41,7 +41,7 @@ void StateMachine::idle()
     }
 
     // Check if any requests should be completed:
-    for (int i = 1; i < floors; i++)
+    for (int i = 1; i <= floors; i++)
     {
         if(que.upRequests[i-1] == 1 || que.downRequests[i-1] == 1)
         {
@@ -57,8 +57,23 @@ void StateMachine::prepareMove()
     Serial.println("*** STATE: PREPARE_MOVE ***");
     // Check weight limit etc...
 
+    for (int i = 1; i <= floors; i++)
+    {
+        if(que.upRequests[i-1] == 1)
+        {
+            direction = UP;
+            break;
+        }else if (que.downRequests[i-1] == 1)
+        {
+            direction = DOWN;
+            break;
+        }
+        
+    }
+    
+
     // After all checks are verified OK, do the correct motion:
-    for (int i = 1; i < floors; i++)
+    for (int i = 1; i <= floors; i++)
     {
         if(que.upRequests[i-1] == 1 && direction == UP)
         {
@@ -67,22 +82,22 @@ void StateMachine::prepareMove()
             {
                 state = MOVING_UP;
                 break;
-            }else if (currentFloor > i)
-            {
-                state = MOVING_DOWN;
-                break;
+            //}else if (currentFloor > i)
+            //{
+            //    state = MOVING_DOWN;
+            //    break;
             }
         }else if (que.downRequests[i-1] == 1 && direction == DOWN)
         {
             anyRequests = true;
-            if (currentFloor < i)
-            {
-                state = MOVING_UP;
-                break;
-            }else if (currentFloor > i)
+            if (currentFloor > i)
             {
                 state = MOVING_DOWN;
                 break;
+            // }else if (currentFloor > i)
+            // {
+            //     state = MOVING_DOWN;
+            //     break;
             }
             
         }else
@@ -100,10 +115,7 @@ void StateMachine::prepareMove()
 
 void StateMachine::moveUp()
 {
-    Serial.println("*** STATE: MOVE_UP ***");
-    // Build moveUp function here
-    Serial.println("Moving up!");
-    //que.printRequests();
+    Serial.println("*** STATE: MOVING_UP ***");
 
     for (int i = currentFloor; i <= floors; i++)
     {
@@ -116,8 +128,6 @@ void StateMachine::moveUp()
             Serial.println("Moving to floor: ");
             Serial.println(currentFloor);
 
-                //1500-(1500-500) = 500 < 1000
-            
             int count = 0;
             unsigned long startTime = 0;
 
@@ -146,17 +156,48 @@ void StateMachine::moveUp()
 
 void StateMachine::moveDown()
 {
-    Serial.println("*** STATE: MOVE_DOWN ***");
-    // Build moveDown function here
-    Serial.println("Moving down!");
-}
+    Serial.println("*** STATE: MOVING_DOWN ***");
 
+    for (int i = 1; i <= floors; i++)
+    {
+        if (que.downRequests[i-1] == 1)
+        {
+            que.printRequests();
+            que.removeDown(i-1);
+            que.printRequests();
+            currentFloor -= i;
+            Serial.println("Moving to floor: ");
+            Serial.println(currentFloor);
+            
+            int count = 0;
+            unsigned long startTime = 0;
+
+            if (count == 0)
+            {
+                startTime = millis();
+            }
+            count++;
+            
+
+            while((millis() - startTime) <= pidController.runTime * (currentFloor-(i-1)))
+            {                
+                pidController.PIDCalc(-(currentFloor-i)*2100, 0.1, 0.003, 0, false);
+                if ((millis() - startTime) >= pidController.runTime * (currentFloor-(i-1)))
+                {
+                    pidController.motorOff();
+                    state = ARRIVED;
+                }
+                
+            }
+            break;
+        }
+        
+    }
+}
 
 void StateMachine::arrived()
 {
     Serial.println("*** STATE: ARRIVED ***");
-    // Build arrived function here
-    Serial.println("Arrived!");
     int count = 0;
     unsigned long startTime = 0;
 
@@ -167,14 +208,16 @@ void StateMachine::arrived()
     count++;
             
     while((millis() - startTime) <= 1000)
-        {                
-            doors.open();
+        {             
             Serial.println("*** OPENING DOORS ***");
+            Serial.println(currentFloor);   
+            doors.open();
             if ((millis() - startTime) >= 1000)
             {
-                delay(5000);
-                doors.close();
+                delay(doors.doorOpeningTime);
                 Serial.println("*** CLOSING DOORS ***");
+                doors.close();
+                doors.doorDisable();
                 state = PREPARING_MOVE;
                 break;
             }

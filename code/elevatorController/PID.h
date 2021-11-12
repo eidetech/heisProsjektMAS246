@@ -11,4 +11,6 @@ public:
     static float PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot);
     static int motorDirection;
     static void motorOff();
+
+    int runTime = 3500;
 };
