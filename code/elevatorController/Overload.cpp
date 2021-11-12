@@ -6,15 +6,13 @@ extern LiquidCrystal lcd;
 
 Overload::Overload()
 { 
-  // Potmeter
+  // Potmeter pinmode
   pinMode(A0, INPUT);   
 }
 
 Overload::~Overload()
   {
   }
-
-// Read poteniometer and store data
 
 bool Overload::checkWeight()
 {
@@ -27,7 +25,8 @@ bool Overload::checkWeight()
     lcd.print(pot); 
     lcd.print(" kg");
     lcd.setCursor(1, 2);
-    lcd.print("---Overload---");
+    lcd.print("*** Overload ***");
+    Serial.println("*** Overload ***");
     delay(500);
     return false;
   }

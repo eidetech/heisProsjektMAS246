@@ -1,31 +1,22 @@
-//#include "DCmotor.h"
-//#include "LED.h"
 #include "CabButtons.h"
 #include "Door.h"
 #include "StateMachine.h"
 #include "FloorButton.h"
-//#include "PID.h"
 #include "Queue.h"
 #include "dac.h"
 #include <LiquidCrystal.h>
 
-//DCmotor dcMotor;
-//LED leds;
-//CabButtons cabButtons;
-//Door doors;
+// Class objects
 FloorButton floorButton;
-//PID pidController;
 StateMachine stateMachine;
 
+// Global LiquidCrystal Display
 extern LiquidCrystal lcd;
 
+// Store time variables and set the update rate
 unsigned long lastMillis = 0;
 unsigned long currentMillis = 0;
 const int updateRate = 100; // ms
-unsigned long millisDiff;
-
-float u;
-int dir;
 
 void setup() {
   Serial.begin(9600);
@@ -35,19 +26,21 @@ void setup() {
   TCCR4B = TCCR4B & 0b11111000 | 0x01; // Setting the PWM frequency from 490Hz to 32kHz
   lcd.begin(16, 2);
 
-// Turn on backlight (PWM 0-255)
+// Turn on backlight on LCD (PWM 0-255)
   analogWrite(4, 255);
+
+  // Create and store special characters (arrows and line)
+  stateMachine.createSpecialChars();
 }
 
-
 void loop() {
-  //u = pidController.PIDCalc(2100, 2, 0.01, 0.3, true);
+  // Capture current time in ms
   currentMillis = millis();
-  millisDiff = currentMillis - lastMillis;
 
+  // Read buttons
   stateMachine.readButtons();
 
-  if(millisDiff >= updateRate)
+  if(currentMillis - lastMillis >= updateRate)
   {
     switch (stateMachine.state)
     {
@@ -66,10 +59,10 @@ void loop() {
     case ARRIVED:
       stateMachine.arrived();
       break;
-    // Add more states here...
     default:  
       break;
     }
+  // Update lastMillis
   lastMillis = millis();
   }
 }

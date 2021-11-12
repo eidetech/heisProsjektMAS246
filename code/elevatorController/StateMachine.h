@@ -11,6 +11,14 @@ public:
     ~StateMachine();
 
     void readButtons();
+
+    // Display
+    void displayDefaultScreen();
+    void displayMovingUp();
+    void displayMovingDown();
+    void createSpecialChars();
+
+    // States
     void idle();
     void prepareMove();
     void moveUp();
@@ -19,6 +27,10 @@ public:
 
     int floors = 4;
     int encoderPos = 2100;
+    int doorOpenTime = 1000;
+    float Kp = 0.1;
+    float Ki = 0.003;
+    float Kd = 0;
 
     int currentFloor = 1;
     bool anyRequests = false;
