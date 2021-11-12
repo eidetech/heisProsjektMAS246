@@ -23,4 +23,7 @@ public:
 
     // Set motor PWM
     void setMotorSpeed(int pwm, direction dir);
+
+    // Turn motor off
+    void motorOff();
 };

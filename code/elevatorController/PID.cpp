@@ -11,6 +11,8 @@ static float e_integral = 0;
 static float e_derivative = 0;
 static int motorDirection = 1;
 
+DCmotor dcMotor;
+
 PID::PID()
 {
 // Interrupt setup
@@ -25,7 +27,6 @@ PID::~PID()
 
 float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot)
 { 
-  DCmotor dcMotor;
   //setPoint = 1000*sin(t_prev/1e6);
   unsigned long t = micros();
   float dt = (t - t_prev)/(1.0e6); // Convert to s
@@ -81,6 +82,11 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
   Serial.println();
   }
   return u;
+}
+
+void PID::motorOff()
+{
+  dcMotor.motorOff();
 }
 
 // readEncoder ISR

@@ -1,21 +1,21 @@
-#include "DCmotor.h"
+//#include "DCmotor.h"
 #include "LED.h"
 #include "CabButtons.h"
 #include "Door.h"
 #include "StateMachine.h"
 #include "FloorButton.h"
-#include "PID.h"
+//#include "PID.h"
 #include "Que.h"
 #include <LiquidCrystal.h>
 #include "dac.h"
 
 
-DCmotor dcMotor;
+//DCmotor dcMotor;
 LED leds;
 //CabButtons cabButtons;
-Door doors;
+//Door doors;
 FloorButton floorButton;
-PID pidController;
+//PID pidController;
 StateMachine stateMachine;
 
 const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
@@ -39,11 +39,11 @@ void setup() {
   // Turn on backlight (PWM 0-255)
   analogWrite(4, 255);
 
-  lcd.print("hallaisikken");
+  lcd.print("Heisikken");
 }
 
 void loop() {
-  //u = pidController.PIDCalc(10*2100, 2, 0.01, 0.3, true);
+  //u = pidController.PIDCalc(2100, 2, 0.01, 0.3, true);
 
   switch (stateMachine.state)
   {
@@ -59,9 +59,11 @@ void loop() {
   case MOVING_DOWN:
     stateMachine.moveDown();
     break;
+  case ARRIVED:
+    stateMachine.arrived();
+    break;
   // Add more states here...
   default:  
     break;
   }
-  delay(500);
 }

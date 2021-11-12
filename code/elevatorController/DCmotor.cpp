@@ -20,3 +20,12 @@ void DCmotor::setMotorSpeed(int pwm, direction dir)
   digitalWrite(PHASE, dir);
   analogWrite(ENABLE, pwm);
 }
+
+// Turn motor off
+void DCmotor::motorOff()
+{
+  digitalWrite(DECAY, HIGH); 
+  digitalWrite(PHASE, LOW);
+  analogWrite(ENABLE, 0);
+}
+

@@ -10,7 +10,7 @@ enum doorState
 class Door
 {
 private:
-    int doorMoveLength = 100;
+    int doorMoveLength = 200;
     StepperMotor stepper;
 public:
     Door();

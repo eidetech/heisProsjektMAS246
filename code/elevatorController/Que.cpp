@@ -23,12 +23,12 @@ int Que::addDown(int floorNum)
 
 int Que::removeUp(int floorNum)
 {
-    upRequests[floorNum-1] = 0;
+    upRequests[floorNum] = 0;
 }
 
 int Que::removeDown(int floorNum)
 {
-    downRequests[floorNum-1] = 0;
+    downRequests[floorNum] = 0;
 }
 
 void Que::printRequests()
