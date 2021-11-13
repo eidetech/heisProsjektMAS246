@@ -13,15 +13,18 @@ by keyboard keys [u] and [d], and are controlled via serial monitor.
 4. [u] [d]
 5. [u] [d]
 6. [u] [d]
-7.     [d]
+7. [d]
 
 To request the elevator. Select current floor you are in by entering 1-7 in serial monitor and press [RETURN]
 Then enter desired direction. LCD screen hold information about the cabs current position and 
 direction.
 
 |'''''''''''''''''''|
+
 |     Up ---->      |
+
 |     1. floor      |
+
 |...................|
 
 
@@ -31,9 +34,13 @@ When inside cab added weight to the cab can be simulated by adjusting the left k
 Total weigth and "OVERLOAD" alarm will flash on LCD-screen if weigth is over 1400 kg.
  
 |'''''''''''''''''''|
+
 |      1450kg	    |
+
 |    -OVERLOAD-     |
+
 |...................|
+
 
 To select the floor you want to go to the buttons 1-7 shall be pressed. The LED ligth above the selected 
 button will ligth up.
