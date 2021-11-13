@@ -9,6 +9,16 @@ Queue::~Queue()
 {
 }
 
+int Queue::add(int floorNum)
+{
+    requests[floorNum-1] = 1;
+}
+
+int Queue::remove(int floorNum)
+{
+    requests[floorNum-1] = 0;
+}
+
 int Queue::addUp(int floorNum)
 {
     upRequests[floorNum-1] = 1;
@@ -43,6 +53,16 @@ void Queue::printRequests()
     for (int i = 1; i <= floors; i++)
     {
         Serial.print(downRequests[i-1]);
+    }
+    Serial.println(" ");
+}
+
+void Queue::printRequests2()
+{
+    Serial.println("Requests: (in add/remove system)");
+    for (int i = 1; i <= floors; i++)
+    {
+        Serial.print(requests[i-1]);
     }
     Serial.println(" ");
 }

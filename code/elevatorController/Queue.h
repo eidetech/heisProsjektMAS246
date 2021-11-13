@@ -18,4 +18,10 @@ public:
     int downRequests[4] = {0, 0, 0, 0};
     
     int floors = 4;
+    
+    // Testing new queue system
+    int requests[4] = {0, 0, 0, 0};
+    int add(int floorNum);
+    int remove(int floorNum);
+    void printRequests2();
 };
