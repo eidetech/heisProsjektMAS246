@@ -19,28 +19,10 @@ To request the elevator. Select current floor you are in by entering 1-7 in seri
 Then enter desired direction. LCD screen hold information about the cabs current position and 
 direction.
 
-|'''''''''''''''''''|
-
-|     Up ---->      |
-
-|     1. floor      |
-
-|...................|
-
-
 The elevator will shortly arrive at selected floor and doors will open.
 
 When inside cab added weight to the cab can be simulated by adjusting the left knob (POT) on the AISL.
 Total weigth and "OVERLOAD" alarm will flash on LCD-screen if weigth is over 1400 kg.
- 
-|'''''''''''''''''''|
-
-|      1450kg	    |
-
-|    -OVERLOAD-     |
-
-|...................|
-
 
 To select the floor you want to go to the buttons 1-7 shall be pressed. The LED ligth above the selected 
 button will ligth up.
@@ -48,7 +30,7 @@ button will ligth up.
 The LEDs will also show the queue in the direction the elevator is moving.
 
 |''''''''''''''''''''''''''''''''''''''''|
-| [ ]  [*]  [ ]  [*]  [ ]  [ ]  [ ]  [ ] |  <- LED		
+| [ ]  [ ]  [ ]  [ ]  [ ]  [ ]  [ ]  [ ] |  <- LED		
 |  7	6    5    4    3    2    1    0  |
 |					                     | 
 |  o    o    o    o    o    o    o    o  |  <- Red buttons
