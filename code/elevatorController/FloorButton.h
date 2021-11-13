@@ -3,7 +3,7 @@ class FloorButton
 private:
 
 public:
-    int floorRequest;
+    int floorRequest = 0;
     int input;
 
     FloorButton();

@@ -1,8 +1,3 @@
-#include "StepperMotor.h"
-
-// Class objects
-StepperMotor stepper;
-
 
 enum doorState
 {

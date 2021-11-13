@@ -7,6 +7,8 @@
 #include <LiquidCrystal.h>
 #include "LED.h"
 #include "Overload.h"
+#include "Display.h"
+//#include "FloorButton.h"
 
 // Class objects
 CabButtons cabButtons;
@@ -15,14 +17,17 @@ Queue que;
 Door doors;
 Overload overload;
 LED leds;
+Display display;
+// FloorButton floorButtons;
 
-// LCD display
-const int rs = 41, en = 40, d4 = 37, d5 = 36, d6 = 35, d7 = 34;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+// Global LiquidCrystal Display
+extern LiquidCrystal lcd;
 
 // Constructor
 StateMachine::StateMachine()
 {
+// Create and store special characters (arrows and line)
+ display.createSpecialChars();
 }
 
 // Destructor
@@ -32,29 +37,39 @@ StateMachine::~StateMachine()
 
 void StateMachine::readButtons()
 {
-    // Check if any tactile buttons are pressed:
+    // Check if any tactile buttons are pressed
     for (int i = 1; i <= floors; i++)
     {
         if(cabButtons.readTactBtn(i) == 1)
         {
-            // Test
-            que.add(i);
-            leds.on(i);
-            // if (currentFloor > i)
-            // {
-            //     que.addDown(i);
-            //     leds.on(i);
-            //     Serial.print("Adding down: ");
-            //     Serial.println(i);
-            // }else if(currentFloor < i)
-            // {
-            //     que.addUp(i);
-            //     leds.on(i);
-            //     Serial.print("Adding up: ");
-            //     Serial.println(i);
-            // }
+            // Only buttons that are not on the current floor may be pressed
+            if (i != currentFloor)
+            {
+                que.add(i);
+                leds.on(i);
+            }
         }
     }
+    if (Serial.available() > 0) {
+    {
+        int count = 0;
+        unsigned long startTime = 0;
+
+        if (count == 0)
+        {
+            startTime = millis();
+        }
+        count++;
+        while((millis() - startTime) <= 1000)
+        {
+        int floor = Serial.read();
+        que.add(floor-48);
+        leds.on(floor-48);
+        }
+    }
+    }
+    
+    
 }
 
 void StateMachine::idle()
@@ -63,7 +78,7 @@ void StateMachine::idle()
     if(overload.checkWeight()) // Returns true if no overload
     {
         // If no overload, then continue
-        displayDefaultScreen();
+        display.displayDefaultScreen();
 
         // Check if any requests should be completed:
         for (int i = 1; i <= floors; i++)
@@ -83,9 +98,7 @@ void StateMachine::prepareMove()
     {
         // If no overload, then continue
         Serial.println("*** STATE: PREPARE_MOVE ***");
-        que.printRequests2();
-        Serial.print("Current floor: ");
-        Serial.println(currentFloor);
+        que.printRequests();
 
         if (direction == UP)
         {
@@ -93,11 +106,9 @@ void StateMachine::prepareMove()
             {
                 if (que.requests[i-1] == 1)
                 {
-                    Serial.println("Direction UP, breaking...");
                     direction = UP;
                     break;
                 }
-            Serial.println("Direction down from inside looop");
             direction = DOWN;
             }
             
@@ -113,61 +124,6 @@ void StateMachine::prepareMove()
             direction = UP;
             }
         }
-        
-        
-
-        // if (direction == UP)
-        // {
-
-        //     for (int i = 1; i <= floors; i++)
-        //     {
-                
-        //         if (que.requests[i-1] == 1 && i < currentFloor)
-        //         {
-        //             direction = DOWN;
-        //             break;
-        //         }
-                
-        //     }
-            
-        // }else if (direction == DOWN)
-        // {
-
-        //     for (int i = floors; i >= 1; i--)
-        //     {
-                
-        //         if (que.requests[i-1] == 1 && i > currentFloor)
-        //         {
-        //             direction = UP;
-        //             break;
-        //         }
-                
-        //     }
-        // }
-        Serial.print("*** DIRECTION: ");
-        if (direction == UP)
-        {
-           Serial.println("UP ***");
-        }else if (direction == DOWN)
-        {       
-            Serial.println("DOWN ***");
-        }
-        
-        
-        
-        // for (int i = 1; i <= floors; i++)
-        // {
-        //     if(que.upRequests[i-1] == 1)
-        //     {
-        //         direction = UP;
-        //         break;
-        //     }else if (que.downRequests[i-1] == 1)
-        //     {
-        //         direction = DOWN;
-        //         break;
-        //     }
-            
-        // }
         
         for (int i = 1; i <= floors; i++)
         {
@@ -199,17 +155,19 @@ void StateMachine::prepareMove()
             state = IDLE;
         }
     }
-
 }
 
 void StateMachine::moveUp()
 {
     Serial.println("*** STATE: MOVING_UP ***");
     // Display moving up graphics on LCD display
-    displayMovingUp();
+    display.displayMovingUp();
 
-    for (int i = floors; i >= 1; i--)
+    int lastFloorChecked = 0;
+
+    for (int i = currentFloor; i <= floors; i++)
     {
+        
         if (que.requests[i-1] == 1)
         {
             int count = 0;
@@ -220,8 +178,6 @@ void StateMachine::moveUp()
                 startTime = millis();
             }
             count++;
-            Serial.println("Got here!, i = ");
-            Serial.print(i);
             while((millis() - startTime) <= (pidController.runTime * (i-currentFloor)))
             {   
                 // Check for button input
@@ -231,23 +187,20 @@ void StateMachine::moveUp()
                 Serial.print((millis() - startTime)); Serial.print(" >= "); Serial.println(pidController.runTime * (i-currentFloor));
                 if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
                 {
-                    Serial.println("Got here2!");
                     // Update current floor
                     currentFloor = i;
                     // Display the default screen
-                    displayDefaultScreen();
+                    display.displayDefaultScreen();
                     // Turn off LED light corresponding to floor
                     leds.off(i);
                     // Make sure the motor is fully off
                     pidController.motorOff();
                     // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
                     state = ARRIVED;
-                }
-                
+                } 
             }
             break;
         }
-        
     }
 }
 
@@ -255,9 +208,9 @@ void StateMachine::moveDown()
 {
     Serial.println("*** STATE: MOVING_DOWN ***");
     // Display moving down graphics on LCD display
-    displayMovingDown();
+    display.displayMovingDown();
 
-    for (int i = floors; i >= 1; i--)
+    for (int i = currentFloor; i >= 1; i--)
     {
         Serial.print("Moving down, i = ");
         Serial.println(i);
@@ -283,7 +236,7 @@ void StateMachine::moveDown()
                     // Update current floor
                     currentFloor = i;
                     // Display the default screen
-                    displayDefaultScreen();
+                    display.displayDefaultScreen();
                     // Turn off LED light corresponding to floor
                     leds.off(i);
                     // Make sure the motor is fully off
@@ -320,6 +273,7 @@ void StateMachine::arrived()
         Serial.println(currentFloor);   
 
         // Open doors
+        display.displayOpeningDoors();
         doors.open();
     
         que.remove(currentFloor);
@@ -329,6 +283,7 @@ void StateMachine::arrived()
             delay(doorOpenTime);
             Serial.println("*** CLOSING DOORS ***");
             // Close doors
+            display.displayClosingDoors();
             doors.close();
 
             // Turn off the stepper motor so it does not draw any current on idle.
@@ -340,67 +295,4 @@ void StateMachine::arrived()
         }
             
     }
-}
-
-void StateMachine::displayDefaultScreen()
-{
-    // Print default screen
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.write("Vertical Express");
-    lcd.setCursor(4,2);
-    lcd.print(currentFloor);
-    lcd.print(".");
-    lcd.print(" floor");
-}
-
-void StateMachine::displayMovingUp()
-{
-    // Display graphics for moving up
-    lcd.clear();
-    lcd.setCursor(0, 1);
-    lcd.print(char(1));
-    lcd.setCursor(0, 0);
-    lcd.print(char(2));
-
-    lcd.setCursor(15, 1);
-    lcd.print(char(1));
-    lcd.setCursor(15, 0);
-    lcd.print(char(2));
-
-    lcd.setCursor(4, 0);
-    lcd.print("Elevator");
-    lcd.setCursor(4, 1);
-    lcd.print("Moving up");
-}
-
-void StateMachine::displayMovingDown()
-{
-    // Display graphics for moving down
-    lcd.clear();
-    lcd.setCursor(0, 1);
-    lcd.print(char(3));
-    lcd.setCursor(0, 0);
-    lcd.print(char(1));
-
-    lcd.setCursor(15, 1);
-    lcd.print(char(3));
-    lcd.setCursor(15, 0);
-    lcd.print(char(1));
-
-    lcd.setCursor(4, 0);
-    lcd.print("Elevator");
-    lcd.setCursor(2, 1);
-    lcd.print("Moving down");
-}
-
-void StateMachine::createSpecialChars()
-{
-    // Define and store the special characters
-    byte line[8]={B00100,B00100,B00100,B00100,B00100,B00100,B00100,B00100,};
-    byte upArrow[8]={B00100,B01110,B11111,B00100,B00100,B00100,B00100,B00100,};
-    byte downArrow[8]={B00100,B00100,B00100,B00100,B00100,B11111,B01110,B00100,};
-    lcd.createChar(1, line);
-    lcd.createChar(2 , upArrow);
-    lcd.createChar(3 , downArrow);
 }

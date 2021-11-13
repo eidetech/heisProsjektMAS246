@@ -11,13 +11,7 @@ public:
     ~StateMachine();
 
     void readButtons();
-
-    // Display
-    void displayDefaultScreen();
-    void displayMovingUp();
-    void displayMovingDown();
-    void createSpecialChars();
-
+    
     // States
     void idle();
     void prepareMove();

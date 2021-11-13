@@ -11,11 +11,18 @@ FloorButton::~FloorButton()
 
 int FloorButton::readFloorBtn()
 {
-  Serial.print("Please select floor.");
-  floorRequest = Serial.read();
-  Serial.println(floorRequest);
-  return floorRequest;
+  // send data only when you receive data:
+  if (Serial.available() > 0) {
+    // read the incoming byte:
+    floorRequest = Serial.read();
+    delay(100);
+    Serial.print("Read from the serial input:");
+    Serial.println(floorRequest-48);
+  }
+    return floorRequest-48;
 }
+  
+  
 
 int FloorButton::readUpDown()
 {

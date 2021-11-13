@@ -19,7 +19,7 @@ unsigned long currentMillis = 0;
 const int updateRate = 100; // ms
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   dac_init();
   set_dac(4095, 4095) ;
 
@@ -28,9 +28,6 @@ void setup() {
 
 // Turn on backlight on LCD (PWM 0-255)
   analogWrite(4, 255);
-
-  // Create and store special characters (arrows and line)
-  stateMachine.createSpecialChars();
 }
 
 void loop() {
@@ -40,6 +37,7 @@ void loop() {
   // Read buttons
   stateMachine.readButtons();
 
+  // Update system if the update rate has passed
   if(currentMillis - lastMillis >= updateRate)
   {
     switch (stateMachine.state)
