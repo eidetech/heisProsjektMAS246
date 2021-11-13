@@ -41,15 +41,15 @@ void StateMachine::readButtons()
             {
                 que.addDown(i);
                 leds.on(i);
-                Serial.print("Adding down");
+                Serial.print("Adding down: ");
                 Serial.println(i);
             }else if(currentFloor < i)
             {
                 que.addUp(i);
                 leds.on(i);
-                Serial.print("Adding up");
+                Serial.print("Adding up: ");
                 Serial.println(i);
-            } 
+            }
         }
     }
 }
@@ -150,6 +150,8 @@ void StateMachine::moveUp()
             
             while((millis() - startTime) <= (pidController.runTime * (i-currentFloor)))
             {   
+                // Check for button input
+                readButtons();
                 // Run DC motor with PID controller
                 pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, false);
                 if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
@@ -179,8 +181,10 @@ void StateMachine::moveDown()
     // Display moving down graphics on LCD display
     displayMovingDown();
 
-    for (int i = 1; i <= floors; i++)
+    for (int i = floors; i >= 1; i--)
     {
+        Serial.print("Moving down, i = ");
+        Serial.println(i);
         if (que.downRequests[i-1] == 1)
         {
             int count = 0;
@@ -194,6 +198,8 @@ void StateMachine::moveDown()
 
             while((millis() - startTime) <= (pidController.runTime * abs(currentFloor-i)))
             {   
+                // Check for button input
+                readButtons();
                 // Run DC motor with PID controller
                 pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, false);
                 if ((millis() - startTime) >= (pidController.runTime * abs(currentFloor-i)))
