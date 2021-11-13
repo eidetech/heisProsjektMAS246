@@ -1,3 +1,5 @@
+#pragma once
+
 // elevatorState holds the possible states of the elevator
 enum elevatorState {IDLE, PREPARING_MOVE, MOVING_UP, MOVING_DOWN, ARRIVED};
 enum elevatorDirection {UP, DOWN};
@@ -28,6 +30,8 @@ public:
 
     int currentFloor = 1;
     bool anyRequests = false;
+
+    int inData = 0;
 
     elevatorState state = IDLE;
     elevatorDirection direction = UP;

@@ -26,8 +26,7 @@ extern LiquidCrystal lcd;
 // Constructor
 StateMachine::StateMachine()
 {
-// Create and store special characters (arrows and line)
- display.createSpecialChars();
+    que.initFloorRequests();
 }
 
 // Destructor
@@ -52,20 +51,31 @@ void StateMachine::readButtons()
     }
     if (Serial.available() > 0) {
     {
-        int count = 0;
-        unsigned long startTime = 0;
-
-        if (count == 0)
+        inData = Serial.read();
+        if (inData == 'u')
         {
-            startTime = millis();
-        }
-        count++;
-        while((millis() - startTime) <= 1000)
+            Serial.println("Please select the floor you are standing in:");
+            delay(3000);
+            if (Serial.available() > 0) {
+            inData = Serial.read();
+            que.addToFloorRequests((inData-48), UP); // -48 because of ASCII characters
+            }
+        }else if (inData == 'd')
         {
-        int floor = Serial.read();
-        que.add(floor-48);
-        leds.on(floor-48);
+            Serial.println("Please select the floor you are standing in:");
+            delay(3000);
+            if (Serial.available() > 0) {
+            inData = Serial.read();
+            que.addToFloorRequests((inData-48), DOWN); // -48 because of ASCII characters
+            }
         }
+        
+        
+        
+        //que.add(floor-48);
+        //leds.on(floor-48);
+        
+        que.printFloorRequests();
     }
     }
     
@@ -79,6 +89,65 @@ void StateMachine::idle()
     // If no overload, then continue
     display.displayDefaultScreen();
 
+    if (direction == UP)
+    {
+        for (int i = currentFloor; i <= floors; i++)
+        {
+            if (que.floorRequests[i][1] == 1)
+            {
+                direction = UP;
+                break;
+            }
+        direction = DOWN;
+        }
+        
+    }else if (direction == DOWN)
+    {
+        for (int i = currentFloor; i >= 1; i--)
+        {
+            if (que.floorRequests[i][2])
+            {
+                direction = DOWN;
+                break;
+            }
+        direction = UP;
+        }
+    }
+
+    // Check if any floor requests are made from any of the floors (with serial monitor)
+    // Check up direction for all floors:
+    if (direction == UP)
+    {    
+        for (int i=0; i<4; i++)
+        {
+            for (int j = 0; j< 3; j++)
+            {
+                if (que.floorRequests[i][1])
+                {
+                    que.add(i+1);
+                    leds.on(i+1);
+                    que.removeFromFloorRequests(i, UP);
+                }
+                
+            }
+        }
+    }else if (direction == DOWN)
+    {    
+        // Check down direction for all floors:
+        for (int i=0; i<4; i++)
+        {
+            for (int j = 0; j< 3; j++)
+            {
+                if (que.floorRequests[i][2])
+                {
+                    que.add(i+1);
+                    leds.on(i+1);
+                    que.removeFromFloorRequests(i, DOWN);
+                }
+                
+            }
+        }
+    }
     // Check if any requests should be completed:
     for (int i = 1; i <= floors; i++)
     {
@@ -97,31 +166,32 @@ void StateMachine::prepareMove()
         // If no overload, then continue
         Serial.println("*** STATE: PREPARE_MOVE ***");
         que.printRequests();
+        que.printFloorRequests();
 
-        if (direction == UP)
-        {
-            for (int i = currentFloor; i <= floors; i++)
-            {
-                if (que.requests[i-1] == 1)
-                {
-                    direction = UP;
-                    break;
-                }
-            direction = DOWN;
-            }
+        // if (direction == UP)
+        // {
+        //     for (int i = currentFloor; i <= floors; i++)
+        //     {
+        //         if (que.requests[i-1] == 1)
+        //         {
+        //             direction = UP;
+        //             break;
+        //         }
+        //     direction = DOWN;
+        //     }
             
-        }else if (direction == DOWN)
-        {
-            for (int i = currentFloor; i >= 1; i--)
-            {
-                if (que.requests[i-1] == 1)
-                {
-                    direction = DOWN;
-                    break;
-                }
-            direction = UP;
-            }
-        }
+        // }else if (direction == DOWN)
+        // {
+        //     for (int i = currentFloor; i >= 1; i--)
+        //     {
+        //         if (que.requests[i-1] == 1)
+        //         {
+        //             direction = DOWN;
+        //             break;
+        //         }
+        //     direction = UP;
+        //     }
+        // }
         
         for (int i = 1; i <= floors; i++)
         {
@@ -182,7 +252,7 @@ void StateMachine::moveUp()
                 readButtons();
                 // Run DC motor with PID controller
                 pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, false);
-                Serial.print((millis() - startTime)); Serial.print(" >= "); Serial.println(pidController.runTime * (i-currentFloor));
+                //Serial.print((millis() - startTime)); Serial.print(" >= "); Serial.println(pidController.runTime * (i-currentFloor));
                 if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
                 {
                     // Update current floor

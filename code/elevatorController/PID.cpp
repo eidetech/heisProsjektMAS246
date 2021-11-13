@@ -16,8 +16,8 @@ DCmotor dcMotor;
 PID::PID()
 {
 // Interrupt setup
-  pinMode(ENCA,INPUT);
-  pinMode(ENCB,INPUT);
+  pinMode(ENCA, INPUT);
+  pinMode(ENCB, INPUT);
   attachInterrupt(digitalPinToInterrupt(ENCA),readEncoder_ISR, RISING);
 }
 

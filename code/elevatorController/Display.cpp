@@ -74,31 +74,27 @@ void Display::displayMovingDown()
 void Display::displayOpeningDoors()
 {
     lcd.clear();
-    lcd.setCursor(1, 0);
+    lcd.setCursor(2, 0);
     lcd.print("Opening Doors");
-    lcd.setCursor(1, 0);
-    lcd.print("<--- --->");
+    lcd.setCursor(2, 1);
+    lcd.print(char(4));
+    lcd.print(char(6));
+    lcd.setCursor(13, 1);
+    lcd.print(char(6));
+    lcd.print(char(5));
 }
 
 void Display::displayClosingDoors()
 {
     lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print(">Closing Doors<");
-    lcd.setCursor(1, 1);
-    lcd.print("---> <---");
-}
-
-void Display::createSpecialChars()
-{
-    // Define and store the special characters
-    byte empty[8]={B00000,B00000,B00000,B00000,B00000,B00000,B00000,B00000,};
-    byte line[8]={B00100,B00100,B00100,B00100,B00100,B00100,B00100,B00100,};
-    byte upArrow[8]={B00100,B01110,B11111,B00100,B00100,B00100,B00100,B00100,};
-    byte downArrow[8]={B00100,B00100,B00100,B00100,B00100,B11111,B01110,B00100,};
-    lcd.createChar(1, line);
-    lcd.createChar(2 , upArrow);
-    lcd.createChar(3 , downArrow);
+    lcd.setCursor(2, 0);
+    lcd.print("Closing Doors");
+    lcd.setCursor(2, 1);
+    lcd.print(char(6));
+    lcd.print(char(5));
+    lcd.setCursor(13, 1);
+    lcd.print(char(4));
+    lcd.print(char(6));
 }
 
 void Display::clearDisplay()
