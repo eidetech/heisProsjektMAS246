@@ -17,6 +17,7 @@ class Display
     void displayMovingDown();
 	void displayOpeningDoors();
 	void displayClosingDoors();
+	void displayEmergency();
     void createSpecialChars();
 
 	void clearDisplay();

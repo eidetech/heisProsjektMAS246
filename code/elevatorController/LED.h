@@ -17,4 +17,7 @@ public:
 
     // Turn off specific LED
     void off(int led);
+
+    // Blink all leds for emergency stop
+    void blinkAllLeds();
 };

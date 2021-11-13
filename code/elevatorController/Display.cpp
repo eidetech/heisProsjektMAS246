@@ -97,6 +97,15 @@ void Display::displayClosingDoors()
     lcd.print(char(6));
 }
 
+void Display::displayEmergency()
+{
+    lcd.clear();
+    lcd.setCursor(1, 0);
+    lcd.print("** Emergency **");
+    lcd.setCursor(1, 1);
+    lcd.print("** Call 911  **");
+}
+
 void Display::clearDisplay()
 {
     lcd.clear();

@@ -44,3 +44,17 @@ void LED::off(int led)
 {
     digitalWrite(49-led, LOW);
 }
+
+void LED::blinkAllLeds()
+{
+    for (int i = 42; i < 50; i++)
+    {
+       digitalWrite(i, HIGH);
+    }
+    delay(500);
+        for (int i = 49; i > 41; i--)
+    {
+       digitalWrite(i, LOW);
+    }
+    delay(500);    
+}

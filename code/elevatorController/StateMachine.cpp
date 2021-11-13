@@ -9,6 +9,7 @@
 #include "Overload.h"
 #include "Display.h"
 //#include "FloorButton.h"
+#include "Emergency.h"
 
 // Class objects
 CabButtons cabButtons;
@@ -18,6 +19,7 @@ Door doors;
 Overload overload;
 LED leds;
 Display display;
+Emergency emergency;
 // FloorButton floorButtons;
 
 // Global LiquidCrystal Display
@@ -69,11 +71,6 @@ void StateMachine::readButtons()
             que.addToFloorRequests((inData-48), DOWN); // -48 because of ASCII characters
             }
         }
-        
-        
-        
-        //que.add(floor-48);
-        //leds.on(floor-48);
         
         que.printFloorRequests();
     }
@@ -363,4 +360,10 @@ void StateMachine::arrived()
         }
             
     }
+}
+
+void StateMachine::emergency()
+{
+    display.displayEmergency();
+    leds.blinkAllLeds();
 }

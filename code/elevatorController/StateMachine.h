@@ -1,7 +1,7 @@
 #pragma once
 
 // elevatorState holds the possible states of the elevator
-enum elevatorState {IDLE, PREPARING_MOVE, MOVING_UP, MOVING_DOWN, ARRIVED};
+enum elevatorState {IDLE, PREPARING_MOVE, MOVING_UP, MOVING_DOWN, ARRIVED, EMERGENCY};
 enum elevatorDirection {UP, DOWN};
 
 class StateMachine
@@ -20,6 +20,7 @@ public:
     void moveUp();
     void moveDown();
     void arrived();
+    void emergency();
 
     int floors = 4;
     int encoderPos = 2100;

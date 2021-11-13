@@ -72,6 +72,9 @@ void loop() {
     case ARRIVED:
       stateMachine.arrived();
       break;
+    case EMERGENCY:
+      stateMachine.emergency();
+      break;
     default:  
       break;
     }

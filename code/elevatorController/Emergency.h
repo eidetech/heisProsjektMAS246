@@ -6,7 +6,7 @@
 class Emergency  
 {
 	private:
-		void readMecanicalEncoder_ISR();
+		static void readMecanicalEncoder_ISR();
 	public:
 
 		Emergency();

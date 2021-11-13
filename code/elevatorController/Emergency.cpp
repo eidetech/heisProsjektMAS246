@@ -1,5 +1,10 @@
 #include "Emergency.h"  
 #include "Arduino.h"
+#include "StateMachine.h"
+#include "LED.h"
+
+extern StateMachine stateMachine;
+extern LED leds;
 
 Emergency::Emergency()
 {
@@ -9,5 +14,9 @@ Emergency::Emergency()
 	
 Emergency::~Emergency()
 {
-	
+}
+
+// readEncoder ISR
+void Emergency::readMecanicalEncoder_ISR(){
+  stateMachine.state = EMERGENCY;  
 }
