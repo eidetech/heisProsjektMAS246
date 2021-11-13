@@ -29,13 +29,6 @@ button will ligth up.
 
 The LEDs will also show the queue in the direction the elevator is moving.
 
-|''''''''''''''''''''''''''''''''''''''''|
-| [ ]  [ ]  [ ]  [ ]  [ ]  [ ]  [ ]  [ ] |  <- LED		
-|  7	6    5    4    3    2    1    0  |
-|					                     | 
-|  o    o    o    o    o    o    o    o  |  <- Red buttons
-|........................................|
-
 The cab will stop in all requested floors until it reaches the top or the bottom and then switch direction.
 
 
