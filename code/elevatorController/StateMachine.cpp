@@ -75,18 +75,16 @@ void StateMachine::readButtons()
 void StateMachine::idle()
 {
     Serial.println("*** STATE: IDLE ***");
-    if(overload.checkWeight()) // Returns true if no overload
-    {
-        // If no overload, then continue
-        display.displayDefaultScreen();
 
-        // Check if any requests should be completed:
-        for (int i = 1; i <= floors; i++)
+    // If no overload, then continue
+    display.displayDefaultScreen();
+
+    // Check if any requests should be completed:
+    for (int i = 1; i <= floors; i++)
+    {
+        if(que.requests[i-1] == 1)
         {
-            if(que.requests[i-1] == 1)
-            {
-                state = PREPARING_MOVE;
-            }
+            state = PREPARING_MOVE;
         }
     }
 }

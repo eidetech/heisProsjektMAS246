@@ -1,11 +1,3 @@
-
-enum doorState
-{
-    OPEN = 0,
-    MOVING = 1,
-    CLOSED = 2
-};
-
 class Door
 {
 private:

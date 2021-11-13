@@ -76,15 +76,17 @@ void Display::displayOpeningDoors()
     lcd.clear();
     lcd.setCursor(1, 0);
     lcd.print("Opening Doors");
+    lcd.setCursor(1, 0);
+    lcd.print("<--- --->");
 }
 
 void Display::displayClosingDoors()
 {
     lcd.clear();
     lcd.setCursor(1, 0);
-    lcd.print("Closing Doors");
+    lcd.print(">Closing Doors<");
     lcd.setCursor(1, 1);
-    lcd.print("* Stay Clear *");
+    lcd.print("---> <---");
 }
 
 void Display::createSpecialChars()
