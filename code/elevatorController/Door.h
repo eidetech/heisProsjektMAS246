@@ -1,5 +1,9 @@
 #include "StepperMotor.h"
 
+// Class objects
+StepperMotor stepper;
+
+
 enum doorState
 {
     OPEN = 0,
@@ -11,7 +15,7 @@ class Door
 {
 private:
     int doorMoveLength = 200;
-    StepperMotor stepper;
+    
 public:
     Door();
     ~Door();
