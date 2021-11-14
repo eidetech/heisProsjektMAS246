@@ -248,7 +248,7 @@ void StateMachine::moveUp()
                 // Check for button input
                 readButtons();
                 // Run DC motor with PID controller
-                pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, false);
+                pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, serialPID);
                 //Serial.print((millis() - startTime)); Serial.print(" >= "); Serial.println(pidController.runTime * (i-currentFloor));
                 if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
                 {
@@ -295,7 +295,7 @@ void StateMachine::moveDown()
                 // Check for button input
                 readButtons();
                 // Run DC motor with PID controller
-                pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, false);
+                pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, serialPID);
                 if ((millis() - startTime) >= (pidController.runTime * abs(currentFloor-i)))
                 {
                     // Update current floor
@@ -366,4 +366,6 @@ void StateMachine::emergency()
 {
     display.displayEmergency();
     leds.blinkAllLeds();
+    pidController.motorOff();
+    doors.doorDisable();
 }

@@ -28,9 +28,11 @@ public:
     float Kp = 0.1;
     float Ki = 0.003;
     float Kd = 0;
+    bool serialPID = true;
 
     int currentFloor = 1;
     bool anyRequests = false;
+    
 
     int inData = 0;
 
