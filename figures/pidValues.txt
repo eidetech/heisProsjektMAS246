@@ -1,0 +1,44 @@
+pid1:
+	Kp =1
+	Ki =0
+	Kd =0
+
+pid2:
+	Kp =2
+	Ki =0
+	Kd =0
+	
+pid3:
+	Kp =4
+	Ki =0
+	Kd =0
+
+pid5:
+	Kp =4
+	Ki =0.005
+	Kd =0
+	
+pid6:
+	Kp =4
+	Ki =0.005
+	Kd =0.06
+
+pid7:
+	Kp =3
+	Ki =0.005
+	Kd =0.06
+
+pid8:
+	Kp =2
+	Ki =0.005
+	Kd =0.06
+	
+pid9:
+	Kp =1
+	Ki =0.005
+	Kd =0.06
+	
+pid4: (final)
+	Kp =1.2
+	Ki =0.005
+	Kd =0.06

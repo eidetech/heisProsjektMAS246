@@ -25,9 +25,12 @@ public:
     int floors = 4;
     int encoderPos = 2100;
     int doorOpenTime = 1000;
-    float Kp = 0.1;
-    float Ki = 0.003;
-    float Kd = 0;
+    // float Kp = 0.1;
+    // float Ki = 0.003;
+    // float Kd = 0;
+    float Kp = 1.2;
+    float Ki = 0.005;
+    float Kd = 0.06;
     bool serialPID = true;
 
     int currentFloor = 1;

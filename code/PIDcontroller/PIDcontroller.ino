@@ -12,8 +12,11 @@ float e;
 float e_integral = 0;
 float e_derivative = 0;
 
+int runTime = 1000;
+int waitTime = 10000;
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // Interrupt setup
   pinMode(ENCA,INPUT);
@@ -27,14 +30,25 @@ void setup() {
 }
 
 void loop() {
+
+  int count = 0;
+  unsigned long startTime = 0;
+
+  if (count == 0)
+  {
+      startTime = millis();
+  }
+  count++;
+  while((millis() - startTime) <= runTime)
+  {
   // Example on setpoints:
   int setpoint = 1200;
   //int setpoint = 1000*sin(t_prev/1e6);
 
   // PID constants
-  float Kp = 4;
-  float Ki = 0.01;
-  float Kd = 0.1;
+  float Kp = 1;
+  float Ki = 0;
+  float Kd = 0;
  
   unsigned long t = micros();
   float dt = (t - t_prev)/(1.0e6); // Convert to s
@@ -86,10 +100,28 @@ void loop() {
   e_prev = e;
 
   // Serial plotting
+  Serial.print("Setpoint:");
   Serial.print(setpoint);
-  Serial.print(" ");
-  Serial.print(pos);
-  Serial.println();
+  Serial.print(",");
+  Serial.print("Position:");
+  Serial.println(pos);
+  
+  if ((millis() - startTime) >= runTime)
+  {
+    safePos = 0; // Note on volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
+    pos = 0;
+    t_prev = 0;
+    e_prev = 0;
+    e = 0;
+    e_integral = 0;
+    e_derivative = 0;
+    digitalWrite(DECAY, HIGH); 
+    digitalWrite(PHASE, HIGH);
+    analogWrite(ENABLE, 0);
+    delay(waitTime);
+    break;
+  }
+}
 }
 
 // readEncoder ISR

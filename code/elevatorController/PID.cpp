@@ -53,8 +53,8 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
   // Set motor output limits
   float pwr = fabs(u);
 
-  if( pwr > 255 ){
-    pwr = 255;
+  if( pwr > 50 ){
+    pwr = 50;
   }
 
   // motor direction
