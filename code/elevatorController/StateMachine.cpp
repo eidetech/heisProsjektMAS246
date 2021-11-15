@@ -83,7 +83,6 @@ void StateMachine::idle()
 {
     Serial.println("*** STATE: IDLE ***");
 
-    // If no overload, then continue
     display.displayDefaultScreen();
 
     if (direction == UP)
