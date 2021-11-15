@@ -161,6 +161,17 @@ void StateMachine::prepareMove()
     {
         // If no overload, then continue
         Serial.println("*** STATE: PREPARE_MOVE ***");
+        if (direction == UP)
+        {   
+            Serial.println("Direction: UP");
+        }else if (direction == DOWN)
+        {
+            Serial.println("Direction: DOWN");
+        }else{
+            Serial.println("No direction! BAD!");
+        }
+        
+        
         que.printRequests();
         que.printFloorRequests();
 
@@ -194,7 +205,7 @@ void StateMachine::prepareMove()
             if(que.requests[i-1] == 1 && direction == UP)
             {
                 anyRequests = true;
-                if (currentFloor < i)
+                if (currentFloor <= i)
                 {
                     state = MOVING_UP;
                     break;
@@ -202,7 +213,7 @@ void StateMachine::prepareMove()
             }else if (que.requests[i-1] == 1 && direction == DOWN)
             {
                 anyRequests = true;
-                if (currentFloor > i)
+                if (currentFloor >= i)
                 {
                     state = MOVING_DOWN;
                     break;

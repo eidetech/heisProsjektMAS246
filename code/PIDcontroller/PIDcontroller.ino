@@ -61,7 +61,7 @@ void loop() {
   interrupts(); // Enable interrupts
   
   // Calculate errors
-  e = pos - setpoint;
+  e = setpoint - pos;
 
   // Integral
   e_integral = e_integral + e*dt;
@@ -80,7 +80,7 @@ void loop() {
 
   // motor direction
   int dir = LOW;
-  if(u<0){
+  if(u>0){
     dir = HIGH;
   }
 

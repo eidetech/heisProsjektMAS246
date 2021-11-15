@@ -9,6 +9,7 @@ static float e_prev = 0;
 static float e;
 static float e_integral = 0;
 static float e_derivative = 0;
+static float activateIntegral = 10;
 static int motorDirection = 1;
 
 DCmotor dcMotor;
@@ -39,7 +40,7 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
   interrupts(); // Enable interrupts
   
   // Calculate errors
-  e = pos - setPoint;
+  e = setPoint - pos;
 
   // Integral
   e_integral = e_integral + e*dt;
@@ -47,6 +48,18 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
   // Derivative
   e_derivative = (e-e_prev)/(dt);
 
+  // Serial.println("e & e_integral & e_derivative");
+  // Serial.print(e);
+  // Serial.print(" = ");
+  // Serial.print(e_integral);
+  //  Serial.print(" = ");
+  // Serial.print(e_derivative);
+
+  // if (e == 0)
+  // {
+  //   e_derivative = 0;
+  // }
+  
   // Calculate control signal u
   float u = Kp*e + Ki*e_integral + Kd*e_derivative;
 
@@ -59,7 +72,7 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
 
   // motor direction
   int dir = LOW;
-  if(u<0){
+  if(u>0){
     dir = HIGH;
   }
 
