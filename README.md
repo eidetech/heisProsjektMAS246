@@ -2,7 +2,7 @@
 
 This program together with the "All in one servo lab" (AISL), simulates an elevator that moves between 7 
 floors. To start the simulation upload elevatorController.ino to AISL. Then open serial monitor in 
-Arduino ide.
+Arduino ide. No lineending and correct baudrate must be selected.
 
 At each floor unless 1. and last there are an up and down button. Theese are represented
 by keyboard keys [u] and [d], and are controlled via serial monitor.  
