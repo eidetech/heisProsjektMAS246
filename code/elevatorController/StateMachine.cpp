@@ -227,8 +227,6 @@ void StateMachine::moveUp()
     // Display moving up graphics on LCD display
     display.displayMovingUp();
 
-    int lastFloorChecked = 0;
-
     for (int i = currentFloor; i <= floors; i++)
     {
         

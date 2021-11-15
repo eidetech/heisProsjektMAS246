@@ -10,8 +10,8 @@ public:
     
     int floors = 4;
     int floorRequests[4][3];
-
     int requests[4] = {0, 0, 0, 0};
+    
     int add(int floorNum);
     int remove(int floorNum);
     void printRequests();
