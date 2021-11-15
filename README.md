@@ -32,18 +32,14 @@ The LEDs will also show the queue in the direction the elevator is moving.
 The cab will stop in all requested floors until it reaches the top or the bottom and then switch direction.
 
 
---Settings:
+Settings:
 
-	Numbers of floor		    floors			    stateMachine.h
- 	Distance beetween floors	endcoderPos		    stateMachine.h
+	Numbers of floor		    	floors			    stateMachine.h
+ 	Distance beetween floors		endcoderPos		    stateMachine.h
  	Time door is open??					            stateMachine.h
  	PID tuning			        Kp, Ki, Kd		    stateMachine.h
 
---Display:
-	All messages displayed in LCD and terminal 		Dispaly.cpp
-	
---Oveload:
-	Set max weigt						            overload.h
+	Set max weigt				setWeigth	            overload.h
 
 
 			
