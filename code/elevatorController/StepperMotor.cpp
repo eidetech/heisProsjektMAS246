@@ -25,6 +25,7 @@ void StepperMotor::moveForward(int steps)
 {
     while(stepCount < steps)
     {
+        stateMachine.readButtons();
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 1)
         {
@@ -114,6 +115,7 @@ void StepperMotor::moveBackward(int steps)
 
     while(stepCount < steps)
     {
+        stateMachine.readButtons();
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 8)
         {

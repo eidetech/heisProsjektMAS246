@@ -56,7 +56,7 @@ void StateMachine::readButtons()
         {
             if (currentFloor != floors)
             {
-            Serial.println("Please select the floor you are standing in: (u)");
+            Serial.println("Please select the floor you are standing in:");
             delay(3000);
                 if (Serial.available() > 0) 
                 {
@@ -174,30 +174,80 @@ void StateMachine::prepareMove()
         
         que.printRequests();
         que.printFloorRequests();
-        
-        for (int i = 1; i <= floors; i++)
+
+        if (direction == UP)
         {
-            if(que.requests[i-1] == 1 && direction == UP)
+            Serial.println("Direction == UP");
+        }else if (direction == DOWN)
+        {
+            Serial.println("Direction == DOWN");
+        }
+        
+        if (direction == UP)
+        {
+            for (int i = floors; i >= 1; i--)
             {
-                anyRequests = true;
-                if (currentFloor <= i)
+                if(que.requests[i-1] == 1)
                 {
-                    state = MOVING_UP;
-                    break;
-                }
-            }else if (que.requests[i-1] == 1 && direction == DOWN)
-            {
-                anyRequests = true;
-                if (currentFloor >= i)
-                {
-                    state = MOVING_DOWN;
-                    break;
-                }  
-            }else
+                    anyRequests = true;
+                    if (currentFloor <= i)
+                    {
+                        state = MOVING_UP;
+                        break;
+                    }else
+                    {
+                        direction = DOWN;
+                    }
+                }else
             {
                 anyRequests = false;
             }
+            }
+        }else if (direction == DOWN)
+        {
+            for (int i = 1; i <= floors; i++)
+            {
+                if(que.requests[i-1] == 1)
+                {
+                    anyRequests = true;
+                    if (currentFloor >= i)
+                    {
+                    state = MOVING_DOWN;
+                    break;
+                    }else
+                    {
+                        direction = UP;
+                    }
+                }else
+            {
+                anyRequests = false;
+            }
+            }
         }
+        
+        
+        
+        // for (int i = 1; i <= floors; i++)
+        // {
+        //     if(que.requests[i-1] == 1)
+        //     {
+        //         anyRequests = true;
+        //         if (currentFloor <= i)
+        //         {
+        //             state = MOVING_UP;
+        //             break;
+        //         }
+        //         else if (currentFloor >= i)
+        //         {
+        //             state = MOVING_DOWN;
+        //             break;
+        //         }
+                
+        //     }else
+        //     {
+        //         anyRequests = false;
+        //     }
+        // }
         if (!anyRequests)
         {
             Serial.println("No requests, going back to IDLE state.");
@@ -216,7 +266,7 @@ void StateMachine::moveUp()
     {
         if (que.requests[i-1] == 1)
         {
-            while(pidController.pos <= (i*encoderPos) - encoderPos)
+            while(pidController.pos-5 <= (i*encoderPos) - encoderPos)
             {   
                 // Run DC motor with PID controller
                 pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, serialPID);
@@ -236,6 +286,7 @@ void StateMachine::moveUp()
                     state = ARRIVED;
                 }
             }
+            break;
         }
     }
 }
@@ -250,14 +301,15 @@ void StateMachine::moveDown()
     {
         if (que.requests[i-1] == 1)
         {
-            while(pidController.pos >= (i*encoderPos) - encoderPos)
+            while(pidController.pos+5 >= (i*encoderPos) - encoderPos)
             {   
                 // Run DC motor with PID controller
-                pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, serialPID);
+                pidController.PIDCalc((i*encoderPos) - encoderPos, Kp+0.2, Ki, Kd, serialPID);
                 // Check for button input
                 readButtons();
-                if (pidController.pos <= (i*encoderPos) - encoderPos)
-                {
+                Serial.print(pidController.pos); Serial.print("<="); Serial.println((i*encoderPos) - encoderPos);
+                if (pidController.pos-50 <= (i*encoderPos) - encoderPos)
+                {   
                     // Update current floor
                     currentFloor = i;
                     // Display the default screen
@@ -270,6 +322,7 @@ void StateMachine::moveDown()
                     state = ARRIVED;
                 }
             }
+            break;
         }
         
     }
