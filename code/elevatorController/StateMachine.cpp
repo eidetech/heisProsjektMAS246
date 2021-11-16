@@ -8,7 +8,6 @@
 #include "LED.h"
 #include "Overload.h"
 #include "Display.h"
-//#include "FloorButton.h"
 #include "Emergency.h"
 
 // Class objects
@@ -20,7 +19,6 @@ Overload overload;
 LED leds;
 Display display;
 Emergency emergency;
-// FloorButton floorButtons;
 
 // Global LiquidCrystal Display
 extern LiquidCrystal lcd;
@@ -56,27 +54,41 @@ void StateMachine::readButtons()
         inData = Serial.read();
         if (inData == 'u')
         {
-            Serial.println("Please select the floor you are standing in:");
+            if (currentFloor != floors)
+            {
+            Serial.println("Please select the floor you are standing in: (u)");
             delay(3000);
-            if (Serial.available() > 0) {
-            inData = Serial.read();
-            que.addToFloorRequests((inData-48), UP); // -48 because of ASCII characters
+                if (Serial.available() > 0) 
+                {
+                inData = Serial.read();
+                que.addToFloorRequests((inData-48), UP); // -48 because of ASCII characters
+                }
+            }else
+            {
+            Serial.println("There is no up button on this floor.");
             }
-        }else if (inData == 'd')
+        }
+        
+        if (inData == 'd')
         {
+            if (currentFloor != 1)
+            {
             Serial.println("Please select the floor you are standing in:");
             delay(3000);
-            if (Serial.available() > 0) {
-            inData = Serial.read();
-            que.addToFloorRequests((inData-48), DOWN); // -48 because of ASCII characters
+                if (Serial.available() > 0) 
+                {
+                inData = Serial.read();
+                que.addToFloorRequests((inData-48), DOWN); // -48 because of ASCII characters
+                }
+            }else
+            {
+            Serial.println("There is no down button on this floor.");
             }
         }
         
         que.printFloorRequests();
     }
     }
-    
-    
 }
 
 void StateMachine::idle()
@@ -124,7 +136,6 @@ void StateMachine::idle()
                     leds.on(i+1);
                     que.removeFromFloorRequests(i, UP);
                 }
-                
             }
         }
     }else if (direction == DOWN)
@@ -140,7 +151,6 @@ void StateMachine::idle()
                     leds.on(i+1);
                     que.removeFromFloorRequests(i, DOWN);
                 }
-                
             }
         }
     }
@@ -161,44 +171,9 @@ void StateMachine::prepareMove()
     {
         // If no overload, then continue
         Serial.println("*** STATE: PREPARE_MOVE ***");
-        if (direction == UP)
-        {   
-            Serial.println("Direction: UP");
-        }else if (direction == DOWN)
-        {
-            Serial.println("Direction: DOWN");
-        }else{
-            Serial.println("No direction! BAD!");
-        }
-        
         
         que.printRequests();
         que.printFloorRequests();
-
-        // if (direction == UP)
-        // {
-        //     for (int i = currentFloor; i <= floors; i++)
-        //     {
-        //         if (que.requests[i-1] == 1)
-        //         {
-        //             direction = UP;
-        //             break;
-        //         }
-        //     direction = DOWN;
-        //     }
-            
-        // }else if (direction == DOWN)
-        // {
-        //     for (int i = currentFloor; i >= 1; i--)
-        //     {
-        //         if (que.requests[i-1] == 1)
-        //         {
-        //             direction = DOWN;
-        //             break;
-        //         }
-        //     direction = UP;
-        //     }
-        // }
         
         for (int i = 1; i <= floors; i++)
         {
@@ -217,8 +192,7 @@ void StateMachine::prepareMove()
                 {
                     state = MOVING_DOWN;
                     break;
-                }
-                
+                }  
             }else
             {
                 anyRequests = false;
@@ -249,18 +223,18 @@ void StateMachine::moveUp()
                 // Check for button input
                 readButtons();
                 if (pidController.pos >= (i*encoderPos) - encoderPos)
-                    {
-                        // Update current floor
-                        currentFloor = i;
-                        // Display the default screen
-                        display.displayDefaultScreen();
-                        // Turn off LED light corresponding to floor
-                        leds.off(i);
-                        // Make sure the motor is fully off
-                        pidController.motorOff();
-                        // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
-                        state = ARRIVED;
-                    }
+                {
+                    // Update current floor
+                    currentFloor = i;
+                    // Display the default screen
+                    display.displayDefaultScreen();
+                    // Turn off LED light corresponding to floor
+                    leds.off(i);
+                    // Make sure the motor is fully off
+                    pidController.motorOff();
+                    // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
+                    state = ARRIVED;
+                }
             }
         }
     }
@@ -283,18 +257,18 @@ void StateMachine::moveDown()
                 // Check for button input
                 readButtons();
                 if (pidController.pos <= (i*encoderPos) - encoderPos)
-                    {
-                        // Update current floor
-                        currentFloor = i;
-                        // Display the default screen
-                        display.displayDefaultScreen();
-                        // Turn off LED light corresponding to floor
-                        leds.off(i);
-                        // Make sure the motor is fully off
-                        pidController.motorOff();
-                        // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
-                        state = ARRIVED;
-                    }
+                {
+                    // Update current floor
+                    currentFloor = i;
+                    // Display the default screen
+                    display.displayDefaultScreen();
+                    // Turn off LED light corresponding to floor
+                    leds.off(i);
+                    // Make sure the motor is fully off
+                    pidController.motorOff();
+                    // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
+                    state = ARRIVED;
+                }
             }
         }
         
@@ -341,8 +315,7 @@ void StateMachine::arrived()
             // Change to the next state according to the state machine diagram.
             state = PREPARING_MOVE;
             break;
-        }
-            
+        }      
     }
 }
 
