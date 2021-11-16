@@ -1,16 +1,3 @@
-clc; clear all; close all;
-
-data=csvread('puttyPID10.csv');
-
-start = 10
-
-sp = data(start:length(data),1)
-pos = data(start:length(data),2)
-
-YMatrix1 = [sp pos]
-
-createfigure(YMatrix1)
-
 function createfigure(YMatrix1)
 %CREATEFIGURE(YMatrix1)
 %  YMATRIX1:  matrix of y data
@@ -30,28 +17,22 @@ set(plot1(1),'DisplayName','Setpoint');
 set(plot1(2),'DisplayName','Position');
 
 % Create ylabel
-ylabel({'Position'});
+ylabel({'Setpoint'});
 
 % Create xlabel
 xlabel({'Time'});
 
 % Create title
-title('PID Tuning, Kp = 1.2, Ki = 0.001, Kd = 0.06','BackgroundColor',[1 1 1]);
+title('PID Tuning 1, Kp = 1, Ki = 0, Kd = 0','BackgroundColor',[1 1 1]);
 
 % Uncomment the following line to preserve the X-limits of the axes
- xlim(axes1,[0 1100]);
+% xlim(axes1,[0 1000]);
 % Uncomment the following line to preserve the Y-limits of the axes
- ylim(axes1,[0 1500]);
+% ylim(axes1,[0 600]);
 box(axes1,'on');
 hold(axes1,'off');
 % Set the remaining axes properties
 set(axes1,'FontWeight','bold','XGrid','on','YGrid','on');
 % Create legend
 legend(axes1,'show');
-
-imageFileName = 'pid10';
-
-% Save figure as .eps
-print(figure1, imageFileName, '-depsc2');
-end
 
