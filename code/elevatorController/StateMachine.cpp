@@ -240,39 +240,28 @@ void StateMachine::moveUp()
 
     for (int i = currentFloor; i <= floors; i++)
     {
-        
         if (que.requests[i-1] == 1)
         {
-            int count = 0;
-            unsigned long startTime = 0;
-
-            if (count == 0)
-            {
-                startTime = millis();
-            }
-            count++;
-            while((millis() - startTime) <= (pidController.runTime * (i-currentFloor)))
+            while(pidController.pos <= (i*encoderPos) - encoderPos)
             {   
-                // Check for button input
-                readButtons();
                 // Run DC motor with PID controller
                 pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, serialPID);
-                //Serial.print((millis() - startTime)); Serial.print(" >= "); Serial.println(pidController.runTime * (i-currentFloor));
-                if ((millis() - startTime) >= (pidController.runTime * (i-currentFloor)))
-                {
-                    // Update current floor
-                    currentFloor = i;
-                    // Display the default screen
-                    display.displayDefaultScreen();
-                    // Turn off LED light corresponding to floor
-                    leds.off(i);
-                    // Make sure the motor is fully off
-                    pidController.motorOff();
-                    // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
-                    state = ARRIVED;
-                } 
+                // Check for button input
+                readButtons();
+                if (pidController.pos >= (i*encoderPos) - encoderPos)
+                    {
+                        // Update current floor
+                        currentFloor = i;
+                        // Display the default screen
+                        display.displayDefaultScreen();
+                        // Turn off LED light corresponding to floor
+                        leds.off(i);
+                        // Make sure the motor is fully off
+                        pidController.motorOff();
+                        // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
+                        state = ARRIVED;
+                    }
             }
-            break;
         }
     }
 }
@@ -285,41 +274,28 @@ void StateMachine::moveDown()
 
     for (int i = currentFloor; i >= 1; i--)
     {
-        Serial.print("Moving down, i = ");
-        Serial.println(i);
         if (que.requests[i-1] == 1)
         {
-            int count = 0;
-            unsigned long startTime = 0;
-
-            if (count == 0)
-            {
-                startTime = millis();
-            }
-            count++;
-
-            while((millis() - startTime) <= (pidController.runTime * abs(currentFloor-i)))
+            while(pidController.pos >= (i*encoderPos) - encoderPos)
             {   
+                // Run DC motor with PID controller
+                pidController.PIDCalc((i*encoderPos) - encoderPos, Kp, Ki, Kd, serialPID);
                 // Check for button input
                 readButtons();
-                // Run DC motor with PID controller
-                pidController.PIDCalc((i*encoderPos) - encoderPos, 0.1, 0.003, 0, serialPID);
-                if ((millis() - startTime) >= (pidController.runTime * abs(currentFloor-i)))
-                {
-                    // Update current floor
-                    currentFloor = i;
-                    // Display the default screen
-                    display.displayDefaultScreen();
-                    // Turn off LED light corresponding to floor
-                    leds.off(i);
-                    // Make sure the motor is fully off
-                    pidController.motorOff();
-                    // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
-                    state = ARRIVED;
-                }
-                
+                if (pidController.pos <= (i*encoderPos) - encoderPos)
+                    {
+                        // Update current floor
+                        currentFloor = i;
+                        // Display the default screen
+                        display.displayDefaultScreen();
+                        // Turn off LED light corresponding to floor
+                        leds.off(i);
+                        // Make sure the motor is fully off
+                        pidController.motorOff();
+                        // Change state to arrived, so that the next switch state in elevatorController.ino will be ARRIVED
+                        state = ARRIVED;
+                    }
             }
-            break;
         }
         
     }
