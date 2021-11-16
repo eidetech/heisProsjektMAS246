@@ -1,5 +1,8 @@
 #include "StepperMotor.h"
 #include "Arduino.h"
+#include "StateMachine.h"
+
+extern StateMachine stateMachine;
 
 StepperMotor::StepperMotor()
 {
@@ -22,6 +25,7 @@ void StepperMotor::moveForward(int steps)
 {
     while(stepCount < steps)
     {
+        stateMachine.readButtons();
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 1)
         {
@@ -111,6 +115,7 @@ void StepperMotor::moveBackward(int steps)
 
     while(stepCount < steps)
     {
+        stateMachine.readButtons();
         currentMillis = millis();
         if((currentMillis-lastMillis) > steppingDelay && stepSequence == 8)
         {
