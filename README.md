@@ -30,6 +30,24 @@ The LEDs will also show the requested queue in the direction the elevator is mov
 
 The cab will stop in all requested floors until it reaches the top or the bottom and then switch direction.
 
+```mermaid
+graph
+
+B((Start)) --> A(Idle)
+A --> D
+D --> E
+D-->F
+D-->A
+E-->G
+F-->G
+G(Arrived)--> D(Prepairing to move)
+E(Moving Up)
+F(Moving Down)
+D-->H(Emergency)
+E-->H
+F-->H
+A-->H
+G-->H
 
 Settings:
 -
