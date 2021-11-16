@@ -175,31 +175,6 @@ void StateMachine::prepareMove()
         que.printRequests();
         que.printFloorRequests();
 
-        // if (direction == UP)
-        // {
-        //     for (int i = currentFloor; i <= floors; i++)
-        //     {
-        //         if (que.requests[i-1] == 1)
-        //         {
-        //             direction = UP;
-        //             break;
-        //         }
-        //     direction = DOWN;
-        //     }
-            
-        // }else if (direction == DOWN)
-        // {
-        //     for (int i = currentFloor; i >= 1; i--)
-        //     {
-        //         if (que.requests[i-1] == 1)
-        //         {
-        //             direction = DOWN;
-        //             break;
-        //         }
-        //     direction = UP;
-        //     }
-        // }
-        
         for (int i = 1; i <= floors; i++)
         {
             if(que.requests[i-1] == 1 && direction == UP)
