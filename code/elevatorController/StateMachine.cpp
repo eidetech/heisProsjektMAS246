@@ -290,7 +290,7 @@ void StateMachine::arrived()
     while((millis() - startTime) <= doorOpenTime)
     {   
         // Check for button input
-        readButtons();
+        
         Serial.println("*** OPENING DOORS ***");
         Serial.print("Arrived at floor: ");
         Serial.println(currentFloor);   
@@ -298,12 +298,18 @@ void StateMachine::arrived()
         // Open doors
         display.displayOpeningDoors();
         doors.open();
-    
         que.remove(currentFloor);
 
+        // Wait for passengers to move
+        unsigned long newStartTime = millis();
+        while (millis()-newStartTime <= doorOpenTime)
+        {
+            readButtons();
+        }
+        
         if ((millis() - startTime) >= doorOpenTime)
         {
-            delay(doorOpenTime);
+            //delay(doorOpenTime);
             Serial.println("*** CLOSING DOORS ***");
             // Close doors
             display.displayClosingDoors();

@@ -1,5 +1,8 @@
 #include "StepperMotor.h"
 #include "Arduino.h"
+#include "StateMachine.h"
+
+extern StateMachine stateMachine;
 
 StepperMotor::StepperMotor()
 {
