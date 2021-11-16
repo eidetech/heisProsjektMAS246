@@ -29,7 +29,7 @@ public:
     // float Ki = 0.003;
     // float Kd = 0;
     float Kp = 1.2;
-    float Ki = 0.005;
+    float Ki = 0.001;
     float Kd = 0.06;
     bool serialPID = true;
 

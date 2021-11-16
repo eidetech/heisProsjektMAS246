@@ -3,7 +3,7 @@
 #include "Arduino.h"
 
 // safePos must be defined as volatile, so that the ISR can control that variable.
-static volatile int safePos = 0; // Note on volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
+static volatile float safePos = 0; // Note on volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
 static unsigned long t_prev = 0;
 static float e_prev = 0;
 static float e;
@@ -11,6 +11,7 @@ static float e_integral = 0;
 static float e_derivative = 0;
 static float activateIntegral = 10;
 static int motorDirection = 1;
+static float PID::pos = 0; 
 
 DCmotor dcMotor;
 
@@ -34,7 +35,7 @@ float PID::PIDCalc(float setPoint, float Kp, float Ki, float Kd, bool serialPlot
   t_prev = t;
 
   // Read the safePos
-  int pos = 0; 
+  pos = 0; 
   noInterrupts(); // Disable interrupts
   pos = safePos;
   interrupts(); // Enable interrupts

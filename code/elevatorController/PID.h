@@ -12,5 +12,7 @@ public:
     static int motorDirection;
     static void motorOff();
 
+    static float pos;
+
     int runTime = 8000;
 };
