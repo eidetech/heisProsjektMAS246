@@ -19,9 +19,9 @@ Then enter desired direction[u/d].
 
 The elevator will shortly arrive at selected floor and doors will open.
 
-![](demo.png)
+<img src="demo.jpg" alt="drawing" width="100"/>
 
-When inside cab added weight to the cab can be simulated by adjusting the left knob (POT) on the AISL. If the weight is above the set limit an alarm will flash on the LCD screen.
+To simulate weight you can adjust the rigth knob on the lab unit. If the weight is above the set limit an alarm will flash on the LCD screen.
 
 To select the floor you want to go to the buttons 1-4 may be pressed. The LED ligth above the selected button will light up.
 
@@ -35,7 +35,7 @@ Settings:
 -
 
     Numbers of floor			floors			stateMachine.h
-    Distance beetween floors	endcoderPos		stateMachine.h
+    Distance beetween floors		endcoderPos		stateMachine.h
     Time door is open			doorTime		stateMachine.h
-    PID tuning					Kp, Ki, Kd		stateMachine.h
-	Set weigt limit  			setWeigth		overload.h
+    PID tuning				Kp, Ki, Kd		stateMachine.h
+    Set weigt limit  			setWeigth		overload.h
