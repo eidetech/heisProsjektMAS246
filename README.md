@@ -19,7 +19,7 @@ Then enter desired direction[u/d].
 
 The elevator will shortly arrive at selected floor and doors will open.
 
-<img src="demo.jpg" alt="drawing" width="100"/>
+<img src="demo.png" width="100"/>
 
 To simulate weight you can adjust the rigth knob on the lab unit. If the weight is above the set limit an alarm will flash on the LCD screen.
 
