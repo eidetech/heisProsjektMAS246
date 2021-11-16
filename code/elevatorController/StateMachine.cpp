@@ -58,7 +58,7 @@ void StateMachine::readButtons()
             {
             Serial.println("Please select the floor you are standing in:");
             delay(3000);
-                if (Serial.available() > 0) 
+                if (Serial.available() > 0)
                 {
                 inData = Serial.read();
                 que.addToFloorRequests((inData-48), UP); // -48 because of ASCII characters
@@ -75,7 +75,7 @@ void StateMachine::readButtons()
             {
             Serial.println("Please select the floor you are standing in:");
             delay(3000);
-                if (Serial.available() > 0) 
+                if (Serial.available() > 0)
                 {
                 inData = Serial.read();
                 que.addToFloorRequests((inData-48), DOWN); // -48 because of ASCII characters
@@ -174,14 +174,6 @@ void StateMachine::prepareMove()
         
         que.printRequests();
         que.printFloorRequests();
-
-        if (direction == UP)
-        {
-            Serial.println("Direction == UP");
-        }else if (direction == DOWN)
-        {
-            Serial.println("Direction == DOWN");
-        }
         
         if (direction == UP)
         {
