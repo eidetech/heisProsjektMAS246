@@ -218,7 +218,6 @@ void StateMachine::prepareMove()
         }
         
         
-<<<<<<< HEAD
         que.printRequests();
         que.printFloorRequests();
 
@@ -361,7 +360,6 @@ void StateMachine::arrived()
         
         if ((millis() - startTime) >= doorOpenTime)
         {
-            //delay(doorOpenTime);
             Serial.println("*** CLOSING DOORS ***");
             // Close doors
             display.displayClosingDoors();
